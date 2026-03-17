@@ -65,16 +65,6 @@ namespace StressCost.Cost
             return true;
         }
 
-        // this is called after a card with this cost resolves on the board
-        // if your cost spends a resource, this is where you'd put that logic
-        public override IEnumerator OnPlayed(int cardCost, PlayableCard card)
-        {
-            stressCounter += cardCost;
-            Console.WriteLine(stressCounter);
-
-            yield return true;
-        }
-
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {
             return TextureHelper.GetImageAsTexture($"StressCost_{cardCost}.png", typeof(StressPlugin).Assembly);

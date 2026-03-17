@@ -87,6 +87,9 @@ namespace StressCost
         {
             AbilRelaxant.AddRelaxant();
             AbilAffection.AddAffection();
+            AbilEnrage.AddEnrage();
+            AbilLiftoff.AddLiftoff();
+            AbilGemAbsorber.AddGemAbsorber();
         }
 
         [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.ResolveCardOnBoard))]
@@ -209,7 +212,6 @@ namespace StressCost
                 pageTrackers = new int[__instance.gameObject.transform.Find("MainPanel").childCount];
             else
                 pageTrackers = new int[__instance.gameObject.transform.Find("MainPanel").childCount + 1];
-            Console.WriteLine(pageTrackers.Length);
 
             List<List<CardInfo>> res = new List<List<CardInfo>>();
             int index = 0;
@@ -267,6 +269,17 @@ namespace StressCost
             }
             else __result.Add(new List<CardInfo>());
         }
+
+        [HarmonyPatch(typeof(ActivatedAbilityBehaviour), nameof(ActivatedAbilityBehaviour.OnActivatedAbility))]
+        [HarmonyPostfix]
+        public static IEnumerator ActivatedAddStress(IEnumerator enumerator, ActivatedAbilityBehaviour __instance)
+        {
+            if (__instance is StressActivatedAbility) Cost.StressCost.stressCounter += (__instance as StressActivatedAbility).StressCost;
+
+            yield return enumerator;
+        }
     }
+
+
 
 }
