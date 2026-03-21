@@ -93,11 +93,18 @@ namespace StressCost
                     int? baseVal = info.GetExtendedPropertyAsInt("ValorRank");
                     if (baseVal == null) baseVal = 0;
 
-                    int? modVal = modVal = info.GetPlayableCard().temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
-                    if (modVal == null) modVal = 0;
+                    try
+                    {
+                        int? modVal = info.GetPlayableCard().temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
+                        if (modVal == null) modVal = 0;
 
-                    if (baseVal + modVal > 0) rankText.GetComponent<PixelText>().SetText(Convert.ToString(baseVal + modVal));
-                    else rankText.GetComponent<PixelText>().SetText("");
+                        if (baseVal + modVal > 0) rankText.GetComponent<PixelText>().SetText(Convert.ToString(baseVal + modVal));
+                        else rankText.GetComponent<PixelText>().SetText("");
+                    } catch
+                    {
+                        if (baseVal > 0) rankText.GetComponent<PixelText>().SetText(Convert.ToString(baseVal));
+                        else rankText.GetComponent<PixelText>().SetText("");
+                    }
                     rankText.GetComponent<PixelText>().SetColor(Color.grey);
 
                 }
