@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -54,11 +55,10 @@ namespace StressCost
         internal static ConfigEntry<int> configFairHandCost;
 
         public static PixelNumeral disStressCounter;
+        public static PixelNumeral disValorCounter;
 
         private void Awake()
         {
-
-
             Log = base.Logger;
             Directory = base.Info.Location.Replace("StressCost.dll", "");
             harmony.PatchAll();
@@ -70,6 +70,48 @@ namespace StressCost
 
             harmony.PatchAll(typeof(StressPlugin));
         }
+        private void Update()
+        {
+            Cost.ValorCost.SetMaxRank();
+
+
+            GameObject[] allCards = Array.FindAll(FindObjectsOfType<GameObject>(), obj => obj.name.Contains("Card ("));
+
+            foreach (GameObject card in allCards)
+            {
+                GameObject statsSect = card.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("PixelCardStats");
+
+                try
+                {
+                    GameObject rankText = statsSect.FindChild("ValorRank");
+                    CardInfo info;
+                    bool isPlayableCard = false;
+
+                    try { info = card.GetComponent<PixelSelectableCard>().Info; }
+                    catch { info = card.GetComponent<PixelPlayableCard>().Info; }
+
+                    int? baseVal = info.GetExtendedPropertyAsInt("ValorRank");
+                    if (baseVal == null) baseVal = 0;
+
+                    int? modVal = modVal = info.GetPlayableCard().temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
+                    if (modVal == null) modVal = 0;
+
+                    if (baseVal + modVal > 0) rankText.GetComponent<PixelText>().SetText(Convert.ToString(baseVal + modVal));
+                    else rankText.GetComponent<PixelText>().SetText("");
+                    rankText.GetComponent<PixelText>().SetColor(Color.grey);
+
+                }
+                catch
+                {
+                    GameObject attack = statsSect.FindChild("Attack");
+
+                    GameObject valorRank = Instantiate(attack);
+                    valorRank.name = "ValorRank";
+                    valorRank.transform.position = new Vector3(attack.transform.position.x + 0.165f, attack.transform.position.y + 0.01f, attack.transform.position.z);
+                    valorRank.transform.SetParent(statsSect.transform);
+                }
+            }
+        }
 
         public static void AddCost()
         {
@@ -77,9 +119,14 @@ namespace StressCost
             stressCost.SetCostTier(Cost.CostTier.CostTierS);
             stressCost.ResourceType = (ResourceType)42;
 
+            FullCardCost valorCost = Register(GUID, "ValorCost", typeof(Cost.ValorCost), Cost.ValorCost.Texture_3D, Cost.ValorCost.Texture_Pixel);
+            valorCost.SetCostTier(Cost.CostTier.CostTierS);
+            valorCost.ResourceType = (ResourceType)42;
+
             if (configFairHandActive.Value)
             {
                 stressCost.SetCanBePlayedByTurn2WithHand(Cost.CardCanBePlayedByTurn2WithHand.CanBePlayed);
+                valorCost.SetCanBePlayedByTurn2WithHand(Cost.CardCanBePlayedByTurn2WithHand.CanBePlayed);
             }
         }
 
@@ -125,11 +172,62 @@ namespace StressCost
             yield return enumerator;
         }
 
+        [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.DoUpkeepPhase))]
+        public class PromotionPhase
+        {
+            public static IEnumerator Postfix(IEnumerator enumerator, TurnManager __instance, bool playerUpkeep)
+            {
+                if (playerUpkeep && __instance.TurnNumber > 1) yield return DoPromotionPhase();
+                yield return enumerator;
+            }
+
+            private static IEnumerator DoPromotionPhase()
+            {
+                var board = Singleton<BoardManager>.Instance;
+                List<CardSlot> all = board.playerSlots;
+                List<CardSlot> available = all.FindAll(slot => slot.Card != null && !slot.Card.HasTrait(Trait.Terrain));
+
+                if (available.Count > 0) yield return board.ChooseTarget(all, available, PromotionSuccess, PromotionFailed, CursorEnteredSlot, () => false, CursorType.Target);
+
+                yield return true;
+            }
+
+            private static void PromotionSuccess(CardSlot slot)
+            {
+                var mod = new CardModificationInfo(0, 0);
+                mod.SetExtendedProperty("ValorRank", 1);
+
+
+                slot.Card.AddTemporaryMod(mod);
+                Console.WriteLine(slot.Card.temporaryMods);
+            }
+
+            private static void PromotionFailed(CardSlot slot)
+            {
+                if (slot.Card != null && slot.Card.Info.HasTrait(Trait.Terrain))
+                {
+                    slot.Card.Anim.StrongNegationEffect();
+                }
+            }
+
+            private static void CursorEnteredSlot(CardSlot slot)
+            {
+
+            }
+        }
+
         [HarmonyPostfix, HarmonyPatch(typeof(TurnManager), nameof(TurnManager.SetupPhase))]
-        public static IEnumerator ResetStress(IEnumerator enumerator, TurnManager __instance, EncounterData encounterData)
+        public static IEnumerator SetupCosts(IEnumerator enumerator, TurnManager __instance, EncounterData encounterData)
         {
             Cost.StressCost.stressCounter = 0;
+            RenderStressCounter();
+            RenderMaxValorCounter();
 
+            return enumerator;
+        }
+
+        public static void RenderStressCounter()
+        {
             try
             {
                 GameObject stress = Instantiate<GameObject>(PixelResourcesManager.Instance.gameObject.transform.Find("Bones").gameObject);
@@ -146,19 +244,56 @@ namespace StressCost
                 stressDis.GetComponent<SpriteRenderer>().sprite = Sprite.Create(
                     texture,
                     new Rect(0, 0, texture.width, texture.height),
-                    new Vector2(13.7f, -6f)
+                    new Vector2(13.7f, -6.5f)
                     );
 
                 GameObject numsBorder = stressDis.gameObject.FindChild("PixelBorderNumeral");
                 disStressCounter = numsBorder.GetComponent<PixelNumeral>();
-                numsBorder.transform.position = new Vector3(-2.08f, 0.87f, 0);
-            } catch (Exception e)
+                numsBorder.transform.position = new Vector3(-2.08f, 0.94f, 0);
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-
-            return enumerator;
         }
+
+        public static void RenderMaxValorCounter()
+        {
+            try
+            {
+                GameObject valor = Instantiate<GameObject>(PixelResourcesManager.Instance.gameObject.transform.Find("Bones").gameObject);
+                valor.SetActive(true);
+                valor.transform.SetParent(PixelResourcesManager.Instance.gameObject.transform);
+                valor.layer = 31;
+                valor.name = "Stress";
+
+                GameObject valorDis = valor.gameObject.FindChild("BoneIcon");
+                valorDis.name = "MaxValorCounter";
+
+                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_valor.png", typeof(StressPlugin).Assembly);
+
+                valorDis.GetComponent<SpriteRenderer>().sprite = Sprite.Create(
+                    texture,
+                    new Rect(0, 0, texture.width, texture.height),
+                    new Vector2(13.7f, -5.5f)
+                    );
+
+                GameObject numsBorder = valorDis.gameObject.FindChild("PixelBorderNumeral");
+                disValorCounter = numsBorder.GetComponent<PixelNumeral>();
+                numsBorder.transform.position = new Vector3(-2.08f, 0.80f, 0);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+
+
+
+
+
+
 
         [HarmonyPatch(typeof(Card), nameof(Card.RenderCard))]
         [HarmonyPostfix]
@@ -169,24 +304,26 @@ namespace StressCost
                 Texture2D texture = TextureHelper.GetImageAsTexture($"pixel_rare_frame_stress.png", typeof(StressPlugin).Assembly);
                 Sprite rareDecal = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.487f));
 
-                if (__instance.Info.GetModPrefix().Contains("Stress") && __instance.Info.metaCategories.Contains(CardMetaCategory.Rare))
+                if (__instance.Info.GetModPrefix() != null && __instance.Info.GetModPrefix().Contains("Stress") && __instance.Info.metaCategories.Contains(CardMetaCategory.Rare))
                     __instance.gameObject.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("RareCardDetail").GetComponent<SpriteRenderer>().sprite = rareDecal;
             }
             catch { }
         }
-        
+
 
         [HarmonyPatch(typeof(CollectionUI), nameof(CollectionUI.Start))]
         public class AddStressTab
         {
             public static void Postfix(ref CollectionUI __instance)
             {
-                AddTab(__instance);
+                AddTab(__instance, "Stress");
+                //AddTab(__instance, "Alchemy");
+                //AddTab(__instance, "Valor");
             }
-            public static void AddTab(CollectionUI instance)
+            public static void AddTab(CollectionUI instance, string name)
             {
                 GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(instance.gameObject.transform.Find("MainPanel").Find("Tabs").Find("Tab_4").gameObject);
-                gameObject.name = "Tab_Stress";
+                gameObject.name = $"Tab_{name}";
 
                 gameObject.transform.parent = instance.gameObject.transform.Find("MainPanel").Find("Tabs");
                 gameObject.transform.localPosition = new Vector3(-0.718f, 0.175f, 0);
@@ -196,11 +333,10 @@ namespace StressCost
                 gameObject.GetComponent<GenericUIButton>().OnButtonDown = (Action<GenericUIButton>)instance.gameObject.transform.Find("MainPanel").Find("Tabs").Find("Tab_4").gameObject.GetComponent<GenericUIButton>().OnButtonDown;
                 gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.55f, 0.44f);
                 
-                Texture2D image = TextureHelper.GetImageAsTexture($"temple_stress.png", typeof(StressPlugin).Assembly);
+                Texture2D image = TextureHelper.GetImageAsTexture($"temple_{name.ToLower()}.png", typeof(StressPlugin).Assembly);
                 gameObject.gameObject.transform.Find("Icon").gameObject.GetComponent<SpriteRenderer>().sprite = Sprite.Create(image, new Rect(0f, 0f, (float)image.width, (float)image.height), new Vector2(0.5f, 0.5f));
             }
         }
-
 
         [HarmonyPatch(typeof(CollectionUI), "CreatePages")]
         [HarmonyPostfix]
@@ -219,7 +355,7 @@ namespace StressCost
             foreach (CardTemple temple in Enum.GetValues(typeof(CardTemple))) if (temple != CardTemple.NUM_TEMPLES)
             {
                 //Get all the cards of the temple who aren't Stress cards. Inject them to __results
-                List<CardInfo> list = cards.FindAll(info => info.temple == temple && info.GetModPrefix() != "Stress");
+                List<CardInfo> list = cards.FindAll(info => info.temple == temple && (info.GetModPrefix() == null || !info.GetModPrefix().Contains("Stress")));
                 InjectToPixelMenu(ref res, list);
 
                 pageTrackers[(int)temple] = index;
@@ -236,7 +372,7 @@ namespace StressCost
             }
 
             //Injects Stress cards
-            List<CardInfo> stressCards = cards.FindAll(info => info.GetModPrefix() == "Stress");
+            List<CardInfo> stressCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Stress"));
             stressCards = stressCards.OrderBy(info =>  (info.metaCategories.Contains(CardMetaCategory.Rare) ? 1 : 100))
                 .ThenBy(info => (info.GetExtendedPropertyAsInt("StressCost")))
                 .ThenBy(info => (info.DisplayedNameEnglish))
