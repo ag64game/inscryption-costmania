@@ -8,12 +8,21 @@ using UnityEngine;
 
 namespace StressCost.Cost
 {
-    internal class CardCanBePlayedByTurn2WithHand
+    internal class FairHandStress
     {
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
             // Fair hand kicks in for cards whose Stress cost is 3 or less
-            return card.GetExtendedPropertyAsInt("StressCost") <= StressPlugin.configFairHandCost.Value;
+            return card.GetExtendedPropertyAsInt("StressCost") <= StressPlugin.configFairHandCostStress.Value;
+        }
+    }
+
+    internal class FairHandValor
+    {
+        public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
+        {
+            // Fair hand kicks in for cards whose Valor cost is 1 or less
+            return card.GetExtendedPropertyAsInt("ValorCost") <= StressPlugin.configFairHandCostValor.Value;
         }
     }
 }

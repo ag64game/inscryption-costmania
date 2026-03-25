@@ -40,10 +40,26 @@ namespace StressCost.Cost
             var board = Singleton<BoardManager>.Instance;
             try
             {
-                CardSlot maxCard = board.playerSlots.FindAll(slot => slot.Card != null)
-                    .OrderByDescending(slot => slot.Card.Info.GetExtendedPropertyAsInt("ValorRank") + slot.Card.TemporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank")))
-                    .First();
-                int? sumMods = 0;
+                List<CardSlot> validSlots = board.playerSlots.FindAll(slot => slot.Card != null && slot.IsPlayerSlot);
+                CardSlot maxCard = validSlots[0];
+
+                foreach (CardSlot slot in validSlots)
+                {
+                    int? slotVal = slot.Card.Info.GetExtendedPropertyAsInt("ValorRank");
+                    if (slotVal == null) slotVal = 0;
+
+                    int? slotMod = slot.Card.TemporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
+                    if (slotMod == null) slotMod = 0;
+
+                    int? maxVal = maxCard.Card.Info.GetExtendedPropertyAsInt("ValorRank");
+                    if (maxVal == null) maxVal = 0;
+
+                    int? maxMod = maxCard.Card.TemporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
+                    if (maxMod == null) maxMod = 0;
+
+                    if (slotVal + slotMod > maxVal + maxMod)
+                        maxCard = slot;
+                }
 
                 int? maxBase = maxCard.Card.Info.GetExtendedPropertyAsInt("ValorRank");
                 if (maxBase == null) maxBase = 0;
@@ -57,7 +73,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost < MaxRank;
+            return cardCost <= MaxRank;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)

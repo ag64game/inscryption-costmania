@@ -33,12 +33,12 @@ namespace StressCost.Sigils
         {
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Affection",
-                "At the end of every turn, [creature] lowers the Stress Counter by 1",
+                "At the end of every turn, [creature] lowers the Stress Counter by 1.",
                 typeof(AbilAffection),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_affection.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_affection.png", typeof(StressPlugin).Assembly));
-            AbilRelaxant.ability = info.ability;
+            AbilAffection.ability = info.ability;
         }
     }
 }

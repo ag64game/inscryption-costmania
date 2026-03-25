@@ -35,7 +35,7 @@ namespace StressCost.Sigils
 
         public static void AddEnrage()
         {
-            const string rulebookDescription = "Pay 2 stress for [creature] to gain 1 Power and Health";
+            const string rulebookDescription = "Pay 2 stress for [creature] to gain 1 Power and Health.";
 
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Enrage",

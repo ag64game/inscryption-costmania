@@ -36,6 +36,7 @@ using UnityEngine.Rendering;
 using UnityEngine.U2D;
 using UnityEngine.UI;
 using static InscryptionAPI.CardCosts.CardCostManager;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StressCost
@@ -44,7 +45,7 @@ namespace StressCost
     public class StressPlugin : BaseUnityPlugin
     {
         public const string GUID = "aga.costmania";
-        public const string NAME = "CostManiia";
+        public const string NAME = "CostMania";
         private const string VERSION = "0.0.6.7";
 
         public static string Directory;
@@ -53,7 +54,8 @@ namespace StressCost
         Harmony harmony = new Harmony(GUID);
 
         internal static ConfigEntry<bool> configFairHandActive;
-        internal static ConfigEntry<int> configFairHandCost;
+        internal static ConfigEntry<int> configFairHandCostStress;
+        internal static ConfigEntry<int> configFairHandCostValor;
 
         public static PixelNumeral disStressCounter;
         public static PixelNumeral disValorCounter;
@@ -64,7 +66,8 @@ namespace StressCost
             Directory = base.Info.Location.Replace("StressCost.dll", "");
             harmony.PatchAll();
             configFairHandActive = base.Config.Bind<bool>("Fair Hand", "Active", true, "Should this mod post-fix patch fair hand to include the new costs");
-            configFairHandCost = base.Config.Bind<int>("Fair Hand", "Stress Cost", 3, "The value in which the card should not show up in fair hand.");
+            configFairHandCostStress = base.Config.Bind<int>("Fair Hand", "Stress Cost", 3, "The value in which the card should not show up in fair hand.");
+            configFairHandCostValor = base.Config.Bind<int>("Fair Hand", "Valor Cost", 1, "The value in which the card should not show up in fair hand.");
 
             AddCost();
             AddSigils();
@@ -78,50 +81,33 @@ namespace StressCost
 
         private void OnGUI()
         {
-            GameObject[] allCards = Array.FindAll(FindObjectsOfType<GameObject>(), obj => obj.name.Contains("Card ("));
+            foreach (GameObject card in Array.FindAll(FindObjectsOfType<GameObject>(), obj => obj.name.Contains("Card ("))) UpdateValorRank(card);
+        }
+        private static void UpdateValorRank(GameObject card)
+        {
+            GameObject statsSect = card.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("PixelCardStats");
+            GameObject rankText = statsSect.FindChild("ValorRank");
+            CardInfo info;
 
-            foreach (GameObject card in allCards)
+            try { info = card.GetComponent<PixelSelectableCard>().Info; }
+            catch { info = card.GetComponent<PixelPlayableCard>().Info; }
+
+            int? baseVal = info.GetExtendedPropertyAsInt("ValorRank");
+            if (baseVal == null) baseVal = 0;
+
+            PixelText statText = rankText.GetComponent<PixelText>();
+            try
             {
-                GameObject statsSect = card.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("PixelCardStats");
+                int? modVal = info.GetPlayableCard().temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
+                if (modVal == null) modVal = 0;
 
-                try
-                {
-                    GameObject rankText = statsSect.FindChild("ValorRank");
-                    CardInfo info;
-                    bool isPlayableCard = false;
-
-                    try { info = card.GetComponent<PixelSelectableCard>().Info; }
-                    catch { info = card.GetComponent<PixelPlayableCard>().Info; }
-
-                    int? baseVal = info.GetExtendedPropertyAsInt("ValorRank");
-                    if (baseVal == null) baseVal = 0;
-
-                    try
-                    {
-                        int? modVal = info.GetPlayableCard().temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
-                        if (modVal == null) modVal = 0;
-
-                        if (baseVal + modVal > 0) rankText.GetComponent<PixelText>().SetText(Convert.ToString(baseVal + modVal));
-                        else rankText.GetComponent<PixelText>().SetText("");
-                    }
-                    catch
-                    {
-                        if (baseVal > 0) rankText.GetComponent<PixelText>().SetText(Convert.ToString(baseVal));
-                        else rankText.GetComponent<PixelText>().SetText("");
-                    }
-
-                    rankText.GetComponent<PixelText>().SetColor(Color.gray);
-
-                }
-                catch
-                {
-                    GameObject attack = statsSect.FindChild("Attack");
-
-                    GameObject valorRank = Instantiate(attack);
-                    valorRank.name = "ValorRank";
-                    valorRank.transform.position = new Vector3(attack.transform.position.x + 0.166f, attack.transform.position.y + 0.005f, attack.transform.position.z);
-                    valorRank.transform.SetParent(statsSect.transform);
-                }
+                if (baseVal + modVal > 0) statText.SetText(Convert.ToString(baseVal + modVal));
+                else statText.SetText("");
+            }
+            catch
+            {
+                if (baseVal > 0) statText.SetText(Convert.ToString(baseVal));
+                else statText.SetText("");
             }
         }
 
@@ -137,8 +123,8 @@ namespace StressCost
 
             if (configFairHandActive.Value)
             {
-                stressCost.SetCanBePlayedByTurn2WithHand(Cost.CardCanBePlayedByTurn2WithHand.CanBePlayed);
-                valorCost.SetCanBePlayedByTurn2WithHand(Cost.CardCanBePlayedByTurn2WithHand.CanBePlayed);
+                stressCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandStress.CanBePlayed);
+                valorCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandValor.CanBePlayed);
             }
         }
 
@@ -149,15 +135,25 @@ namespace StressCost
             AbilEnrage.AddEnrage();
             AbilLiftoff.AddLiftoff();
             AbilGemAbsorber.AddGemAbsorber();
+            AbilFrontliner.AddFrontliner();
+            AbilBloodGuzzler.AddBloodGuzzler();
+            AbilIronclad.AddIronclad();
+            AbilFearmonger.AddFearmonger();
+            AbilFirstStrike.AddFirstStrike();
+            AbilWatchman.AddWatchman();
         }
 
         [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.ResolveCardOnBoard))]
         [HarmonyPostfix]
         public static IEnumerator PayStressCost(IEnumerator enumerator, BoardManager __instance, PlayableCard card, CardSlot slot)
         {
-            if (slot.IsPlayerSlot) Cost.StressCost.stressCounter += Convert.ToInt32(card.Info.GetExtendedProperty("StressCost"));
+            if (slot.IsPlayerSlot)
+            {
+                Cost.StressCost.stressCounter += Convert.ToInt32(card.Info.GetExtendedProperty("StressCost"));
+                if(card.Info.GetExtendedPropertyAsInt("StressCost") > 0) foreach (CardSlot fearSlot in __instance.allSlots.FindAll(slot => slot.Card != null)) yield return OnStressCounterChange(fearSlot.Card, enumerator);
+            }
 
-            return enumerator;
+            yield return enumerator;
         }
 
         [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.DoCombatPhase))]
@@ -211,6 +207,8 @@ namespace StressCost
                 mod.SetExtendedProperty("ValorRank", 1);
 
                 slot.Card.AddTemporaryMod(mod);
+
+                UpdateValorRank(slot.Card.gameObject);
             }
 
             private static void PromotionFailed(CardSlot slot)
@@ -225,6 +223,35 @@ namespace StressCost
             private static void CursorEnteredSlot(CardSlot slot)
             {
 
+            }
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(Card), nameof(Card.RenderCard))]
+        public static void RenderValorRank(Card __instance)
+        {
+            GameObject statsSect = __instance.gameObject.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("PixelCardStats");
+            GameObject rankText = statsSect.FindChild("ValorRank");
+            CardInfo info;
+
+            try { info = __instance.gameObject.GetComponent<PixelSelectableCard>().Info; }
+            catch { info = __instance.gameObject.GetComponent<PixelPlayableCard>().Info; }
+
+            int? baseVal = info.GetExtendedPropertyAsInt("ValorRank");
+            if (baseVal == null) baseVal = 0;
+
+            if (rankText == null)
+            {
+                GameObject attack = statsSect.FindChild("Attack");
+                rankText = Instantiate(attack);
+                rankText.name = "ValorRank";
+                rankText.transform.position = new Vector3(attack.transform.position.x + 0.166f, attack.transform.position.y + 0.005f, attack.transform.position.z);
+                rankText.transform.SetParent(statsSect.transform);
+
+                PixelText stat = rankText.GetComponent<PixelText>();
+                stat.SetColor(Color.gray);
+
+                if (baseVal > 0) stat.SetText(Convert.ToString(baseVal));
+                else stat.SetText("");
             }
         }
 
@@ -313,11 +340,20 @@ namespace StressCost
         {
             try
             {
-                Texture2D texture = TextureHelper.GetImageAsTexture($"pixel_rare_frame_stress.png", typeof(StressPlugin).Assembly);
-                Sprite rareDecal = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.487f));
+                Texture2D textureStress = TextureHelper.GetImageAsTexture($"pixel_rare_frame_stress.png", typeof(StressPlugin).Assembly);
+                Sprite rareDecalStress = Sprite.Create(textureStress, new Rect(0, 0, textureStress.width, textureStress.height), new Vector2(0.5f, 0.487f));
 
-                if (__instance.Info.GetModPrefix() != null && __instance.Info.GetModPrefix().Contains("Stress") && __instance.Info.metaCategories.Contains(CardMetaCategory.Rare))
-                    __instance.gameObject.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("RareCardDetail").GetComponent<SpriteRenderer>().sprite = rareDecal;
+                Texture2D textureValor = TextureHelper.GetImageAsTexture($"pixel_rare_frame_valor.png", typeof(StressPlugin).Assembly);
+                Sprite rareDecalValor = Sprite.Create(textureStress, new Rect(0, 0, textureStress.width, textureStress.height), new Vector2(0.5f, 0.487f));
+
+                SpriteRenderer decalRenderer = __instance.gameObject.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("RareCardDetail").GetComponent<SpriteRenderer>();
+
+                if (__instance.Info.GetModPrefix() != null && __instance.Info.metaCategories.Contains(CardMetaCategory.Rare))
+                {
+                    if (__instance.Info.GetModPrefix().Contains("Stress")) decalRenderer.sprite = rareDecalStress;
+                    else if (__instance.Info.GetModPrefix().Contains("Valor")) decalRenderer.sprite = rareDecalValor;
+                }
+                    
             }
             catch { }
         }
@@ -328,9 +364,9 @@ namespace StressCost
         {
             public static void Postfix(ref CollectionUI __instance)
             {
-                AddTab(__instance, "Stress", new Vector3(-0.718f, 0.175f, 0));
-                //AddTab(__instance, "Alchemy");
-                AddTab(__instance, "Valor", new Vector3(-0.242f, 0.175f, 0));
+                AddTab(__instance, "Alchemy", new Vector3(-0.718f, 0.175f, 0));
+                AddTab(__instance, "Stress", new Vector3(-0.242f, 0.175f, 0));
+                AddTab(__instance, "Valor", new Vector3(0.234f, 0.175f, 0));
             }
             public static void AddTab(CollectionUI instance, string name, Vector3 position)
             {
@@ -357,9 +393,9 @@ namespace StressCost
             //Take the amount of buttons for array
             int[] pageTrackers;
             if(!BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("mrfantastik.inscryption.infact2")) 
-                pageTrackers = new int[6];
-            else
                 pageTrackers = new int[7];
+            else
+                pageTrackers = new int[8];
 
             Console.WriteLine(pageTrackers.Length);
 
@@ -369,7 +405,7 @@ namespace StressCost
             foreach (CardTemple temple in Enum.GetValues(typeof(CardTemple))) if (temple != CardTemple.NUM_TEMPLES)
             {
                 //Get all the cards of the temple who aren't Stress cards. Inject them to __results
-                List<CardInfo> list = cards.FindAll(info => info.temple == temple && (info.GetModPrefix() == null || (!info.GetModPrefix().Contains("Stress") && !info.GetModPrefix().Contains("Valor"))));
+                List<CardInfo> list = cards.FindAll(info => info.temple == temple && (info.GetModPrefix() == null || (!info.GetModPrefix().Contains("Alchemy") && !info.GetModPrefix().Contains("Stress") && !info.GetModPrefix().Contains("Valor"))));
                 InjectToPixelMenu(ref res, list);
 
                 pageTrackers[(int)temple] = index;
@@ -384,6 +420,17 @@ namespace StressCost
                 pageTrackers[(int)CardTemple.NUM_TEMPLES] = index;
                 index++;
             }
+
+            //Injects Stress cards
+            List<CardInfo> alchemyCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Alchemy"));
+            alchemyCards = alchemyCards.OrderBy(info => (info.metaCategories.Contains(CardMetaCategory.Rare) ? 1 : 100))
+                .ThenBy(info => (info.GetExtendedPropertyAsInt("StressCost")))
+                .ThenBy(info => (info.DisplayedNameEnglish))
+                .ToList();
+
+            InjectToPixelMenu(ref res, alchemyCards);
+            pageTrackers[pageTrackers.Length - 3] = index;
+            if (alchemyCards.Count != 0) index += Convert.ToInt32(Mathf.Ceil(alchemyCards.Count / 8f)); else index++;
 
             //Injects Stress cards
             List<CardInfo> stressCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Stress"));
@@ -436,10 +483,49 @@ namespace StressCost
         [HarmonyPostfix]
         public static IEnumerator ActivatedAddStress(IEnumerator enumerator, ActivatedAbilityBehaviour __instance)
         {
-            if (__instance is StressActivatedAbility) Cost.StressCost.stressCounter += (__instance as StressActivatedAbility).StressCost;
+            if (__instance is StressActivatedAbility)
+            {
+                Cost.StressCost.stressCounter += (__instance as StressActivatedAbility).StressCost;
+                if((__instance as StressActivatedAbility).StressCost > 0) foreach (CardSlot slot in Singleton<BoardManager>.Instance.playerSlots.FindAll(slot => slot.Card != null)) OnStressCounterChange(slot.Card, enumerator);
+            }
 
             yield return enumerator;
         }
+
+        [HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.TakeDamage))]
+        [HarmonyPrefix]
+        public static void SetupDefenceAbilities(ref PlayableCard __instance, ref int damage, ref PlayableCard attacker) 
+        { 
+            if (__instance.HasAbility(AbilIronclad.ability) && damage > 0)
+            {
+                damage--;
+                __instance.Anim.StrongNegationEffect();
+            }
+        }
+
+        public static IEnumerator OnStressCounterChange(PlayableCard card, IEnumerator enumerator)
+        {
+            try
+            {
+                if (card.HasAbility(AbilFearmonger.ability))
+                {
+                    CardSlot opponent = card.Slot.opposingSlot;
+
+                    card.Anim.PlayAttackAnimation(false, opponent);
+                    yield return new WaitForSeconds(0.175f);
+
+                    if (opponent.Card != null) yield return opponent.Card.TakeDamage(card.Attack, card);
+                    else
+                    {
+                        yield return new WaitForSeconds(0.175f);
+                        yield return Singleton<LifeManager>.Instance.ShowDamageSequence(card.Attack, card.Attack, card.OpponentCard, 0.3f, null, 0.15f, true);
+                    }
+                }
+            } finally { }
+
+            if (enumerator != null) yield return enumerator; else yield return true;
+        }
+        
     }
 
 

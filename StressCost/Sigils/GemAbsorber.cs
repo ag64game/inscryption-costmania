@@ -50,6 +50,7 @@ namespace StressCost.Sigils
                 }
 
                 yield return LearnAbility(0.2f);
+                yield return true;
             }
             else
             {
@@ -60,7 +61,7 @@ namespace StressCost.Sigils
 
         public static void AddGemAbsorber()
         {
-            const string rulebookDescription = "When [creature] is placed on the board. All Mox cards you control perish, each granting it +1 Power and Health";
+            const string rulebookDescription = "When [creature] is placed on the board. All Mox cards you control perish, each granting it +1 Power and Health.";
 
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Gem Absorber",

@@ -49,7 +49,7 @@ namespace StressCost.Sigils
 
         public static void AddLiftoff()
         {
-            const string rulebookDescription = "[creature] lifts adjascent allies to the air making them go Airborne";
+            const string rulebookDescription = "[creature] lifts adjascent allies to the air making them go Airborne.";
 
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Liftoff",
