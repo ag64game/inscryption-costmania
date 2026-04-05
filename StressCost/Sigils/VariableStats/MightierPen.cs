@@ -33,8 +33,8 @@ namespace StressCost.Sigils.VariableStats
                 "The value represented in this sigil is equal to the sum of the Valor Rank of the bearer's adjascent allies",
                 typeof(VariablestatMightierPen));
 
-            info.SetIcon(TextureHelper.GetImageAsTexture($"3d_mightierpen.png", typeof(StressPlugin).Assembly));
-            info.SetPixelIcon(TextureHelper.GetImageAsTexture($"pixel_mightierpen.png", typeof(StressPlugin).Assembly));
+            info.SetIcon(TextureHelper.GetImageAsTexture($"3d_mightierpen.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPixelIcon(TextureHelper.GetImageAsTexture($"pixel_mightierpen.png", typeof(CostmaniaPlugin).Assembly));
             info.appliesToAttack = true;
             info.appliesToHealth = false;
             info.gbcDescription = "[creature]'s power is equal to the sum of the Valor Rank of it's adjascent allies";

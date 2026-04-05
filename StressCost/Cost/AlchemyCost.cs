@@ -49,7 +49,7 @@ namespace StressCost.Cost
 
         private void Update()
         {
-            Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_{value.ToString().ToLower()}_alchemy_die.png", typeof(StressPlugin).Assembly);
+            Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_{value.ToString().ToLower()}_alchemy_die.png", typeof(CostmaniaPlugin).Assembly);
             texWidth = texture.width;
             texHeight = texture.height;
 
@@ -216,7 +216,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= StressPlugin.disAlchemyCounter.fleshCount;
+            return cardCost <= CostmaniaPlugin.disAlchemyCounter.fleshCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -239,13 +239,13 @@ namespace StressCost.Cost
 
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {
-            return TextureHelper.GetImageAsTexture($"FleshCost_{cardCost}.png", typeof(StressPlugin).Assembly);
+            return TextureHelper.GetImageAsTexture($"FleshCost_{cardCost}.png", typeof(CostmaniaPlugin).Assembly);
         }
 
         public static Texture2D Texture_Pixel(int cardCost, CardInfo info, PlayableCard card)
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
-            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_flesh.png", typeof(StressPlugin).Assembly));
+            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_flesh.png", typeof(CostmaniaPlugin).Assembly));
         }
     }
     internal class MetalCost : CustomCardCost
@@ -254,7 +254,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= StressPlugin.disAlchemyCounter.metalCount;
+            return cardCost <= CostmaniaPlugin.disAlchemyCounter.metalCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -277,13 +277,13 @@ namespace StressCost.Cost
 
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {
-            return TextureHelper.GetImageAsTexture($"MetalCost_{cardCost}.png", typeof(StressPlugin).Assembly);
+            return TextureHelper.GetImageAsTexture($"MetalCost_{cardCost}.png", typeof(CostmaniaPlugin).Assembly);
         }
 
         public static Texture2D Texture_Pixel(int cardCost, CardInfo info, PlayableCard card)
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
-            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_metal.png", typeof(StressPlugin).Assembly));
+            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_metal.png", typeof(CostmaniaPlugin).Assembly));
         }
     }
     internal class ElixirCost : CustomCardCost
@@ -292,7 +292,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= StressPlugin.disAlchemyCounter.elixirCount;
+            return cardCost <= CostmaniaPlugin.disAlchemyCounter.elixirCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -315,13 +315,13 @@ namespace StressCost.Cost
 
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {
-            return TextureHelper.GetImageAsTexture($"ElixirCost_{cardCost}.png", typeof(StressPlugin).Assembly);
+            return TextureHelper.GetImageAsTexture($"ElixirCost_{cardCost}.png", typeof(CostmaniaPlugin).Assembly);
         }
 
         public static Texture2D Texture_Pixel(int cardCost, CardInfo info, PlayableCard card)
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
-            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_elixir.png", typeof(StressPlugin).Assembly));
+            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_elixir.png", typeof(CostmaniaPlugin).Assembly));
         }
     }
 }

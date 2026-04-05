@@ -34,7 +34,7 @@ namespace StressCost.Sigils
                 typeof(AbilShatteringStardust),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_shatteringstardust.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_shatteringstardust.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_shatteringstardust.png", typeof(CostmaniaPlugin).Assembly));
             AbilShatteringStardust.ability = info.ability;
         }
     }

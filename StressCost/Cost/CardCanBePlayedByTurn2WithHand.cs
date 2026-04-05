@@ -13,7 +13,7 @@ namespace StressCost.Cost
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
             // Fair hand kicks in for cards whose Stress cost is 3 or less
-            return amount <= StressPlugin.configFairHandCostStress.Value;
+            return amount <= 3;
         }
     }
 
@@ -22,7 +22,7 @@ namespace StressCost.Cost
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
             // Fair hand kicks in for cards whose Valor cost is 1 or less
-            return amount <= StressPlugin.configFairHandCostValor.Value;
+            return amount <= 1;
         }
     }
 
@@ -31,7 +31,7 @@ namespace StressCost.Cost
     {
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
-            return amount <= StressPlugin.configFairHandCostValor.Value;
+            return amount <= 1;
         }
     }
 
@@ -39,7 +39,7 @@ namespace StressCost.Cost
     {
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
-            return amount <= StressPlugin.configFairHandCostValor.Value;
+            return amount <= 1;
         }
     }
 
@@ -47,7 +47,7 @@ namespace StressCost.Cost
     {
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
-            return amount <= StressPlugin.configFairHandCostValor.Value;
+            return amount <= 1;
         }
     }
 
@@ -56,9 +56,9 @@ namespace StressCost.Cost
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
             // Fair hand kicks in for cards whose Stardust cost is 2 or less, assuming no other card is eligible for fair hand
-            return amount <= StressPlugin.configFairHandCostStardust.Value && hand.FindAll(card => card.EnergyCost <= 1 ||
-            card.GetCustomCost("StressCost") <= StressPlugin.configFairHandCostStress.Value || card.GetCustomCost("FleshCost") <= StressPlugin.configFairHandCostValor.Value ||
-            card.GetCustomCost("MetalCost") <= StressPlugin.configFairHandCostValor.Value || card.GetCustomCost("ElixirCost") <= StressPlugin.configFairHandCostValor.Value).Count == 0;
+            return amount <= 1 && hand.FindAll(card => card.EnergyCost <= 1 ||
+            card.GetCustomCost("StressCost") <= 1 || card.GetCustomCost("FleshCost") <= 1 ||
+            card.GetCustomCost("MetalCost") <= 1 || card.GetCustomCost("ElixirCost") <= 1).Count == 0;
         }
     }
 }

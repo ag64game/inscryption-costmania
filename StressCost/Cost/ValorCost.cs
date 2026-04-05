@@ -31,7 +31,7 @@ namespace StressCost.Cost
             set
             {
                 __maxrank = value;
-                try { StressPlugin.disValorCounter.DisplayValue((int)Cost.ValorCost.MaxRank); } catch { }
+                try { CostmaniaPlugin.disValorCounter.DisplayValue((int)Cost.ValorCost.MaxRank); } catch { }
             }
         }
 
@@ -68,7 +68,8 @@ namespace StressCost.Cost
                 if (maxMods == null) maxMods = 0;
 
                 MaxRank = maxBase + maxMods;
-            } catch { MaxRank = 0; }
+            }
+            catch { MaxRank = 0; }
         }
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
@@ -96,13 +97,13 @@ namespace StressCost.Cost
 
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {
-            return TextureHelper.GetImageAsTexture($"ValorCost_{cardCost}.png", typeof(StressPlugin).Assembly);
+            return TextureHelper.GetImageAsTexture($"ValorCost_{cardCost}.png", typeof(CostmaniaPlugin).Assembly);
         }
 
         public static Texture2D Texture_Pixel(int cardCost, CardInfo info, PlayableCard card)
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
-            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_valor.png", typeof(StressPlugin).Assembly));
+            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_valor.png", typeof(CostmaniaPlugin).Assembly));
         }
     }
 }

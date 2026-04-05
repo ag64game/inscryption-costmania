@@ -24,7 +24,7 @@ namespace StressCost.Sigils
             yield return new WaitForSeconds(0.2f);
             try
             {
-                StressPlugin.disAlchemyCounter.AddDies();
+                CostmaniaPlugin.disAlchemyCounter.AddDies();
             }
             catch { }
             yield return new WaitForSeconds(0.3f);
@@ -40,7 +40,7 @@ namespace StressCost.Sigils
                 typeof(AbilEldritchPower),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_eldritchpower.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_eldritchpower.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_eldritchpower.png", typeof(CostmaniaPlugin).Assembly));
             AbilEldritchPower.ability = info.ability;
         }
     }

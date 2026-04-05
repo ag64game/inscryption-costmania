@@ -39,7 +39,7 @@ namespace StressCost.Sigils
                 typeof(AbilFrontliner),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_frontliner.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_frontliner.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_frontliner.png", typeof(CostmaniaPlugin).Assembly));
             AbilFrontliner.ability = info.ability;
         }
     }

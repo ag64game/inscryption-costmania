@@ -43,7 +43,7 @@ namespace StressCost.Sigils
                 typeof(AbilEnrage),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_enrage.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_enrage.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_enrage.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);
             AbilEnrage.ability = info.ability;
         }

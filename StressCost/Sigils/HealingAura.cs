@@ -48,7 +48,7 @@ namespace StressCost.Sigils
                 typeof(AbilHealingAura),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_healingaura.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_healingaura.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_healingaura.png", typeof(CostmaniaPlugin).Assembly));
             AbilHealingAura.ability = info.ability;
         }
     }

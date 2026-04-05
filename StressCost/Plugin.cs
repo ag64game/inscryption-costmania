@@ -20,6 +20,7 @@ using InscryptionCommunityPatch.Card;
 using InscryptionCommunityPatch.PixelTutor;
 using Pixelplacement;
 using Pixelplacement.TweenSystem;
+using Sirenix.Serialization.Utilities;
 using Steamworks;
 using StressCost.Cost;
 using StressCost.Sigils;
@@ -44,7 +45,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace StressCost
 {
     [BepInPlugin(GUID, NAME, VERSION)]
-    public class StressPlugin : BaseUnityPlugin
+    public class CostmaniaPlugin : BaseUnityPlugin
     {
         public const string GUID = "aga.costmania";
         public const string NAME = "CostMania";
@@ -54,11 +55,6 @@ namespace StressCost
         internal static ManualLogSource Log;
 
         Harmony harmony = new Harmony(GUID);
-
-        internal static ConfigEntry<bool> configFairHandActive;
-        internal static ConfigEntry<int> configFairHandCostStress;
-        internal static ConfigEntry<int> configFairHandCostValor;
-        internal static ConfigEntry<int> configFairHandCostStardust;
 
         public static PixelNumeral disStressCounter;
         public static PixelNumeral disValorCounter;
@@ -73,20 +69,22 @@ namespace StressCost
         private static List<PixelSelectableCard> packCards, preset;
         private static bool openPack;
 
+        private static bool introStarted = false;
+        private static List<PickupCardPileVolume> stones;
+
         private void Awake()
         {
             Log = base.Logger;
-            Directory = base.Info.Location.Replace("StressCost.dll", "");
+            Directory = base.Info.Location.Replace("Costmania.dll", "");
             harmony.PatchAll();
-            configFairHandActive = base.Config.Bind<bool>("Fair Hand", "Active", true, "Should this mod post-fix patch fair hand to include the new costs");
-            configFairHandCostStress = base.Config.Bind<int>("Fair Hand", "Stress Cost", 3, "The value in which the card should not show up in fair hand.");
-            configFairHandCostValor = base.Config.Bind<int>("Fair Hand", "Valor Cost", 1, "The value in which the card should not show up in fair hand.");
-            configFairHandCostStardust = base.Config.Bind<int>("Fair Hand", "Stardust Cost", 1, "The value in which the card should not show up in fair hand.");
 
             AddCost();
             AddSigils();
 
-            harmony.PatchAll(typeof(StressPlugin));
+            harmony.PatchAll(typeof(CostmaniaPlugin));
+
+            SetupStarterDecks();
+            
         }
         private void Update()
         {
@@ -106,13 +104,13 @@ namespace StressCost
 
                 if (packDisplay != "Og" && packImg.isVisible)
                 {
-                    Texture2D texture = TextureHelper.GetImageAsTexture($"card_pack_{packDisplay.ToLower()}.png", typeof(StressPlugin).Assembly);
+                    Texture2D texture = TextureHelper.GetImageAsTexture($"card_pack_{packDisplay.ToLower()}.png", typeof(CostmaniaPlugin).Assembly);
                     packImg.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector3(0.5f, 0.5f, 0.1f));
 
-                    Texture2D rippedLeft = TextureHelper.GetImageAsTexture($"ripped_card_left_{packDisplay.ToLower()}.png", typeof(StressPlugin).Assembly);
+                    Texture2D rippedLeft = TextureHelper.GetImageAsTexture($"ripped_card_left_{packDisplay.ToLower()}.png", typeof(CostmaniaPlugin).Assembly);
                     packRippedLeft.sprite = Sprite.Create(rippedLeft, new Rect(0, 0, rippedLeft.width, rippedLeft.height), new Vector3(0.5f, 0.5f, 0.1f));
 
-                    Texture2D rippedRight = TextureHelper.GetImageAsTexture($"ripped_card_right_{packDisplay.ToLower()}.png", typeof(StressPlugin).Assembly);
+                    Texture2D rippedRight = TextureHelper.GetImageAsTexture($"ripped_card_right_{packDisplay.ToLower()}.png", typeof(CostmaniaPlugin).Assembly);
                     packRippedRight.sprite = Sprite.Create(rippedRight, new Rect(0, 0, rippedRight.width, rippedRight.height), new Vector3(0.5f, 0.5f, 0.1f));
                 }
 
@@ -132,6 +130,36 @@ namespace StressCost
             }
             catch { }
         }
+
+        private static void SetupStarterDecks()
+        {
+            string[] alchemyDeck = {"Alchemy_Pylon", "Alchemy_Pylon" , "Alchemy_Pylon" , "Alchemy_Pylon" , "Alchemy_Pylon" , "Alchemy_Pylon" , "Alchemy_Homonculus", "Alchemy_Homonculus",
+            "Alchemy_Zeppeloid", "Alchemy_Zeppeloid", "Alchemy_Spite", "Alchemy_Spite", "Alchemy_Biosynth", "Alchemy_Biosynth", "Alchemy_CarnivorousPylop", "Alchemy_Biborg", "Alchemy_Biborg",
+            "Alchemy_DeepOne", "Alchemy_CarnivorousPylop", "Alchemy_CarnivorousPylop", "Alchemy_Biborg"};
+            GBC.StarterDecks.NATURE_STARTER.AddRange(alchemyDeck);
+
+            string[] stressDeck = { "Stress_Pills", "Stress_Pills", "Stress_Pills", "Stress_Pills", "Stress_Pills", "Stress_Myso", "Stress_Myso", "Stress_Myso", "Stress_Ekrixi",
+            "Stress_Ekrixi", "Stress_Venustra", "Stress_Venustra", "Stress_Obeso", "Stress_Obeso", "Stress_Venustra", "Stress_Myso", "Stress_Aero", "Stress_Aero", "Stress_Ommeta", "Stress_Ommeta"};
+            GBC.StarterDecks.UNDEAD_STARTER.AddRange(stressDeck);
+
+            string[] spaceDeck = { "Space_Telescope", "Space_Telescope", "Space_Telescope", "Space_Telescope", "Space_Telescope", "Space_Alien", "Space_Alien", "Space_Alien",
+                "Space_ShootingStar", "Space_ShootingStar", "Space_ShootingStar", "Space_Asteroid", "Space_Asteroid", "Space_Stargazer",
+                "Space_Stargazer", "Space_Asteroid", "Space_Alien", "Space_Exomorph", "Space_Exomorph", "Space_Alien", };
+            GBC.StarterDecks.TECH_STARTER.AddRange(spaceDeck);
+
+            string[] valorDeck = { "Valor_WarBanner", "Valor_WarBanner", "Valor_WarBanner", "Valor_WarBanner", "Valor_WarBanner", "Valor_InfantryKnight", "Valor_InfantryKnight", "Valor_InfantryKnight",
+                "Valor_Flagbearer", "Valor_Flagbearer", "Valor_Flagbearer", "Valor_Longbowman", "Valor_Longbowman", "Valor_Longbowman", "Valor_Longbowman", "Valor_CorsairPirate", "Valor_CorsairPirate",
+                "Valor_Commandant", "Valor_Commandant", "Valor_Flagbearer"};
+            GBC.StarterDecks.WIZARD_STARTER.AddRange(valorDeck);
+        }
+
+        private static List<CardInfo> ArrayToInfos(string[] names)
+        {
+            List<CardInfo> ret = new List<CardInfo>();
+            foreach (string name in names) ret.Add(CardLoader.GetCardByName(name));
+            return ret;
+        }
+
         private static void UpdateValorRank(GameObject card)
         {
             GameObject statsSect = card.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("PixelCardStats");
@@ -165,36 +193,32 @@ namespace StressCost
             FullCardCost stressCost = Register(GUID, "StressCost", typeof(Cost.StressCost), Cost.StressCost.Texture_3D, Cost.StressCost.Texture_Pixel);
             stressCost.SetCostTier(Cost.CostTier.CostTierS);
             stressCost.ResourceType = (ResourceType)42;
+            stressCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandStress.CanBePlayed);
 
             FullCardCost valorCost = Register(GUID, "ValorCost", typeof(Cost.ValorCost), Cost.ValorCost.Texture_3D, Cost.ValorCost.Texture_Pixel);
             valorCost.SetCostTier(Cost.CostTier.CostTierV);
             valorCost.ResourceType = (ResourceType)42;
+            valorCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandValor.CanBePlayed);
 
             FullCardCost fleshCost = Register(GUID, "FleshCost", typeof(Cost.FleshCost), Cost.FleshCost.Texture_3D, Cost.FleshCost.Texture_Pixel);
             fleshCost.SetCostTier(Cost.CostTier.CostTierA);
             fleshCost.ResourceType = (ResourceType)42;
+            fleshCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandFlesh.CanBePlayed);
 
             FullCardCost metalCost = Register(GUID, "MetalCost", typeof(Cost.MetalCost), Cost.MetalCost.Texture_3D, Cost.MetalCost.Texture_Pixel);
             metalCost.SetCostTier(Cost.CostTier.CostTierA);
             metalCost.ResourceType = (ResourceType)42;
+            metalCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandMetal.CanBePlayed);
 
             FullCardCost elixirCost = Register(GUID, "ElixirCost", typeof(Cost.ElixirCost), Cost.ElixirCost.Texture_3D, Cost.ElixirCost.Texture_Pixel);
             elixirCost.SetCostTier(Cost.CostTier.CostTierA);
             elixirCost.ResourceType = (ResourceType)42;
+            elixirCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandElixir.CanBePlayed);
 
             FullCardCost stardustCost = Register(GUID, "StardustCost", typeof(Cost.StardustCost), Cost.StardustCost.Texture_3D, Cost.StardustCost.Texture_Pixel);
             stardustCost.SetCostTier(Cost.CostTier.CostTierS);
             stardustCost.ResourceType = (ResourceType)42;
-
-            if (configFairHandActive.Value)
-            {
-                stressCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandStress.CanBePlayed);
-                valorCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandValor.CanBePlayed);
-                fleshCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandFlesh.CanBePlayed);
-                metalCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandMetal.CanBePlayed);
-                elixirCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandElixir.CanBePlayed);
-                stardustCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandStardust.CanBePlayed);
-            }
+            stardustCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandStardust.CanBePlayed);
         }
 
         public static void AddSigils()
@@ -234,7 +258,7 @@ namespace StressCost
                 if (card.Info.GetExtendedPropertyAsInt("StressCost") > 0)
                 {
                     Cost.StressCost.stressCounter += card.Info.GetExtendedPropertyAsInt("StressCost").Value;
-                    foreach (CardSlot fearSlot in __instance.AllSlots.FindAll(slot => slot.Card != null && !slot.Card.LacksAllAbilities())) yield return OnStressCounterChange(fearSlot.Card, enumerator);
+                    foreach (CardSlot fearSlot in __instance.AllSlots.FindAll(slot => slot.Card != null && slot.Card.Info.abilities.Count != 0)) yield return OnStressCounterChange(fearSlot.Card, enumerator);
                 }
 
                 if (card.Info.GetExtendedPropertyAsInt("FleshCost") > 0) disAlchemyCounter.PayIfPossible(AlchemyValue.Flesh, card.Info.GetExtendedPropertyAsInt("FleshCost").Value);
@@ -413,7 +437,7 @@ namespace StressCost
                 GameObject stressDis = stress.gameObject.FindChild("BoneIcon");
                 stressDis.name = "StressCounter";
 
-                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_stress.png", typeof(StressPlugin).Assembly);
+                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_stress.png", typeof(CostmaniaPlugin).Assembly);
 
                 stressDis.GetComponent<SpriteRenderer>().sprite = Sprite.Create(
                     texture,
@@ -444,7 +468,7 @@ namespace StressCost
                 GameObject valorDis = valor.gameObject.FindChild("BoneIcon");
                 valorDis.name = "MaxValorRank";
 
-                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_valor.png", typeof(StressPlugin).Assembly);
+                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_valor.png", typeof(CostmaniaPlugin).Assembly);
 
                 valorDis.GetComponent<SpriteRenderer>().sprite = Sprite.Create(
                     texture,
@@ -475,7 +499,7 @@ namespace StressCost
                 GameObject stardustDis = stardust.gameObject.FindChild("BoneIcon");
                 stardustDis.name = "StardustCounter";
 
-                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_stardust.png", typeof(StressPlugin).Assembly);
+                Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_stardust.png", typeof(CostmaniaPlugin).Assembly);
 
                 stardustDis.GetComponent<SpriteRenderer>().sprite = Sprite.Create(
                     texture,
@@ -512,32 +536,36 @@ namespace StressCost
         [HarmonyPostfix]
         public static void AddRareDecals(Card __instance)
         {
-            try
+            if (!BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("nevernamed.no_rare.decals"))
             {
-                Texture2D textureStress = TextureHelper.GetImageAsTexture($"pixel_rare_frame_stress.png", typeof(StressPlugin).Assembly);
-                Sprite rareDecalStress = Sprite.Create(textureStress, new Rect(0, 0, textureStress.width, textureStress.height), new Vector2(0.5f, 0.487f));
-
-                Texture2D textureValor = TextureHelper.GetImageAsTexture($"pixel_rare_frame_valor.png", typeof(StressPlugin).Assembly);
-                Sprite rareDecalValor = Sprite.Create(textureValor, new Rect(0, 0, textureValor.width, textureValor.height), new Vector2(0.5f, 0.487f));
-
-                Texture2D textureAlchemy = TextureHelper.GetImageAsTexture($"pixel_rare_frame_alchemy.png", typeof(StressPlugin).Assembly);
-                Sprite rareDecalAlchemy = Sprite.Create(textureAlchemy, new Rect(0, 0, textureAlchemy.width, textureAlchemy.height), new Vector2(0.5f, 0.487f));
-
-                Texture2D textureSpace = TextureHelper.GetImageAsTexture($"pixel_rare_frame_space.png", typeof(StressPlugin).Assembly);
-                Sprite rareDecalSpace = Sprite.Create(textureSpace, new Rect(0, 0, textureSpace.width, textureSpace.height), new Vector2(0.5f, 0.487f));
-
-                SpriteRenderer decalRenderer = __instance.gameObject.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("RareCardDetail").GetComponent<SpriteRenderer>();
-
-                if (__instance.Info.GetModPrefix() != null && __instance.Info.metaCategories.Contains(CardMetaCategory.Rare))
+                try
                 {
-                    if (__instance.Info.GetModPrefix().Contains("Stress")) decalRenderer.sprite = rareDecalStress;
-                    else if (__instance.Info.GetModPrefix().Contains("Valor")) decalRenderer.sprite = rareDecalValor;
-                    else if (__instance.Info.GetModPrefix().Contains("Alchemy")) decalRenderer.sprite = rareDecalAlchemy;
-                    else if (__instance.Info.GetModPrefix().Contains("Space")) decalRenderer.sprite = rareDecalSpace;
+                    Texture2D textureStress = TextureHelper.GetImageAsTexture($"pixel_rare_frame_stress.png", typeof(CostmaniaPlugin).Assembly);
+                    Sprite rareDecalStress = Sprite.Create(textureStress, new Rect(0, 0, textureStress.width, textureStress.height), new Vector2(0.5f, 0.487f));
+
+                    Texture2D textureValor = TextureHelper.GetImageAsTexture($"pixel_rare_frame_valor.png", typeof(CostmaniaPlugin).Assembly);
+                    Sprite rareDecalValor = Sprite.Create(textureValor, new Rect(0, 0, textureValor.width, textureValor.height), new Vector2(0.5f, 0.487f));
+
+                    Texture2D textureAlchemy = TextureHelper.GetImageAsTexture($"pixel_rare_frame_alchemy.png", typeof(CostmaniaPlugin).Assembly);
+                    Sprite rareDecalAlchemy = Sprite.Create(textureAlchemy, new Rect(0, 0, textureAlchemy.width, textureAlchemy.height), new Vector2(0.5f, 0.487f));
+
+                    Texture2D textureSpace = TextureHelper.GetImageAsTexture($"pixel_rare_frame_space.png", typeof(CostmaniaPlugin).Assembly);
+                    Sprite rareDecalSpace = Sprite.Create(textureSpace, new Rect(0, 0, textureSpace.width, textureSpace.height), new Vector2(0.5f, 0.487f));
+
+                    SpriteRenderer decalRenderer = __instance.gameObject.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("RareCardDetail").GetComponent<SpriteRenderer>();
+
+                    if (__instance.Info.GetModPrefix() != null && __instance.Info.metaCategories.Contains(CardMetaCategory.Rare))
+                    {
+                        if (__instance.Info.GetModPrefix().Contains("Stress")) decalRenderer.sprite = rareDecalStress;
+                        else if (__instance.Info.GetModPrefix().Contains("Valor")) decalRenderer.sprite = rareDecalValor;
+                        else if (__instance.Info.GetModPrefix().Contains("Alchemy")) decalRenderer.sprite = rareDecalAlchemy;
+                        else if (__instance.Info.GetModPrefix().Contains("Space")) decalRenderer.sprite = rareDecalSpace;
+                    }
+
                 }
-                    
+                catch { }
             }
-            catch { }
+                
         }
 
 
@@ -564,7 +592,7 @@ namespace StressCost
                 gameObject.GetComponent<GenericUIButton>().OnButtonDown = (Action<GenericUIButton>)instance.gameObject.transform.Find("MainPanel").Find("Tabs").Find("Tab_4").gameObject.GetComponent<GenericUIButton>().OnButtonDown;
                 gameObject.GetComponent<BoxCollider2D>().size = new Vector2(0.55f, 0.38f);
                 
-                Texture2D image = TextureHelper.GetImageAsTexture($"temple_{name.ToLower()}.png", typeof(StressPlugin).Assembly);
+                Texture2D image = TextureHelper.GetImageAsTexture($"temple_{name.ToLower()}.png", typeof(CostmaniaPlugin).Assembly);
                 gameObject.gameObject.transform.Find("Icon").gameObject.GetComponent<SpriteRenderer>().sprite = Sprite.Create(image, new Rect(0f, 0f, (float)image.width, (float)image.height), new Vector2(0.5f, 0.5f));
             }
         }
@@ -703,6 +731,8 @@ namespace StressCost
 
         public static IEnumerator OnStressCounterChange(PlayableCard card, IEnumerator enumerator)
         {
+            if (card.LacksAllAbilities()) yield return enumerator;
+
             if (card.HasAbility(AbilFearmonger.ability))
             {
                 CardSlot opponent = card.Slot.opposingSlot;

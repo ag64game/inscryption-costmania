@@ -33,7 +33,7 @@ namespace StressCost.Sigils
                 if (Card.Info.GetExtendedProperty("TroopName") != null) troopName = Card.Info.GetExtendedProperty("TroopName");
                 else
                 {
-                    if (modPrefix == null || !StressPlugin.NEW_TEMPLES.Any(newTemple => modPrefix.Contains(newTemple)))
+                    if (modPrefix == null || !CostmaniaPlugin.NEW_TEMPLES.Any(newTemple => modPrefix.Contains(newTemple)))
                     {
                         switch (Card.Info.temple)
                         {
@@ -85,7 +85,7 @@ namespace StressCost.Sigils
                 typeof(AbilArmyBuilder),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_armybuilder.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_armybuilder.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_armybuilder.png", typeof(CostmaniaPlugin).Assembly));
             AbilArmyBuilder.ability = info.ability;
         }
     }

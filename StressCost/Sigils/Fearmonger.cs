@@ -22,7 +22,7 @@ namespace StressCost.Sigils
                 typeof(AbilIronclad),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_fearmonger.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_fearmonger.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_fearmonger.png", typeof(CostmaniaPlugin).Assembly));
             AbilFearmonger.ability = info.ability;
         }
     }

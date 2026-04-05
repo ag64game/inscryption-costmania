@@ -31,7 +31,7 @@ namespace StressCost.Cost
             {
                 //__prev = __counter;
                 __counter = value;
-                try { StressPlugin.disStardustCounter.DisplayValue(Cost.StardustCost.stardustCounter); } catch { }
+                try { CostmaniaPlugin.disStardustCounter.DisplayValue(Cost.StardustCost.stardustCounter); } catch { }
                 //DisplaySequentially();
             }
         }
@@ -46,7 +46,7 @@ namespace StressCost.Cost
             {
                 for (int i = 1; i < dif; i++)
                 {
-                    StressPlugin.disStressCounter.DisplayValue(__prev + curVal);
+                    CostmaniaPlugin.disStressCounter.DisplayValue(__prev + curVal);
                     curVal+= factor;
 
                     yield return new WaitForSeconds(waitTime);
@@ -82,13 +82,13 @@ namespace StressCost.Cost
 
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {
-            return TextureHelper.GetImageAsTexture($"StardustCost_{cardCost}.png", typeof(StressPlugin).Assembly);
+            return TextureHelper.GetImageAsTexture($"StardustCost_{cardCost}.png", typeof(CostmaniaPlugin).Assembly);
         }
 
         public static Texture2D Texture_Pixel(int cardCost, CardInfo info, PlayableCard card)
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
-            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_stardust.png", typeof(StressPlugin).Assembly));
+            return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_stardust.png", typeof(CostmaniaPlugin).Assembly));
         }
     }
 

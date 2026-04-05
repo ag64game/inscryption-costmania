@@ -30,7 +30,7 @@ namespace StressCost.Sigils
                 typeof(AbilRandomAbility),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_randomability.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_randomability.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_randomability.png", typeof(CostmaniaPlugin).Assembly));
             AbilIronclad.ability = info.ability;
         }
     }

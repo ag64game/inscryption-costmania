@@ -71,7 +71,7 @@ namespace StressCost.Sigils
                 typeof(AbilWarper),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_warper.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_warper.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_warper.png", typeof(CostmaniaPlugin).Assembly));
             AbilWarper.ability = info.ability;
         }
     }

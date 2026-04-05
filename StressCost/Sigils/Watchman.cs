@@ -55,7 +55,7 @@ namespace StressCost.Sigils
                 typeof(AbilWatchman),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_watchman.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_watchman.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_watchman.png", typeof(CostmaniaPlugin).Assembly));
             AbilWatchman.ability = info.ability;
         }
     }

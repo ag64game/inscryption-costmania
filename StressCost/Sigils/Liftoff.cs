@@ -57,7 +57,7 @@ namespace StressCost.Sigils
                 typeof(AbilLiftoff),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_liftoff.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_liftoff.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_liftoff.png", typeof(CostmaniaPlugin).Assembly));
             AbilLiftoff.ability = info.ability;
         }
     }

@@ -45,7 +45,7 @@ namespace StressCost.Sigils
                 typeof(AbilSigilEater),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_sigileater.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_sigileater.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_sigileater.png", typeof(CostmaniaPlugin).Assembly));
             AbilSigilEater.ability = info.ability;
         }
     }

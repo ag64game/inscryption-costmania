@@ -31,7 +31,7 @@ namespace StressCost.Sigils
                 typeof(AbilStarbringer),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_starbringer.png");
 
-            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_starbringer.png", typeof(StressPlugin).Assembly));
+            info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_starbringer.png", typeof(CostmaniaPlugin).Assembly));
             AbilStarbringer.ability = info.ability;
         }
     }

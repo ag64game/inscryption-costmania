@@ -29,8 +29,8 @@ namespace StressCost.Sigils.VariableStats
                 "The value represented in this sigil is equal to the amount of opposing cards that have perished.",
                 typeof(VariablestatDeathToll));
 
-            info.SetIcon(TextureHelper.GetImageAsTexture($"3d_deathtoll.png", typeof(StressPlugin).Assembly));
-            info.SetPixelIcon(TextureHelper.GetImageAsTexture($"pixel_deathtoll.png", typeof(StressPlugin).Assembly));
+            info.SetIcon(TextureHelper.GetImageAsTexture($"3d_deathtoll.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPixelIcon(TextureHelper.GetImageAsTexture($"pixel_deathtoll.png", typeof(CostmaniaPlugin).Assembly));
             info.appliesToAttack = true;
             info.appliesToHealth = false;
             info.gbcDescription = "[creature]'s power is equal to the amount of opposing cards that have perished.";
