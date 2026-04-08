@@ -29,33 +29,9 @@ namespace StressCost.Cost
 
             set
             {
-                //__prev = __counter;
                 __counter = value;
-                try { CostmaniaPlugin.disStressCounter.DisplayValue(Cost.StressCost.stressCounter); } catch { }
-                //DisplaySequentially();
+                try { Patches.CostGraphicPatches.disStressCounter.DisplayValue(Cost.StressCost.stressCounter); } catch { }
             }
-        }
-        private static IEnumerator DisplaySequentially()
-        {
-            int dif = __prev / __counter;
-            float waitTime = 0.25f / dif;
-            int factor = __prev > __counter ? -1 : 1;
-            int curVal = factor;
-
-            try
-            {
-                for (int i = 1; i < dif; i++)
-                {
-                    CostmaniaPlugin.disStressCounter.DisplayValue(__prev + curVal);
-                    curVal+= factor;
-
-                    yield return new WaitForSeconds(waitTime);
-                }
-            }
-            finally { }
-
-
-            yield return true;
         }
 
         public override string CostName => "StressCost";

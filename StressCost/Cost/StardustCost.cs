@@ -31,7 +31,7 @@ namespace StressCost.Cost
             {
                 //__prev = __counter;
                 __counter = value;
-                try { CostmaniaPlugin.disStardustCounter.DisplayValue(Cost.StardustCost.stardustCounter); } catch { }
+                try { Patches.CostGraphicPatches.disStardustCounter.DisplayValue(Cost.StardustCost.stardustCounter); } catch { }
                 //DisplaySequentially();
             }
         }
@@ -46,7 +46,7 @@ namespace StressCost.Cost
             {
                 for (int i = 1; i < dif; i++)
                 {
-                    CostmaniaPlugin.disStressCounter.DisplayValue(__prev + curVal);
+                    Patches.CostGraphicPatches.disStressCounter.DisplayValue(__prev + curVal);
                     curVal+= factor;
 
                     yield return new WaitForSeconds(waitTime);

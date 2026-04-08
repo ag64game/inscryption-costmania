@@ -256,7 +256,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= CostmaniaPlugin.disAlchemyCounter.fleshCount;
+            return cardCost <= Patches.CostGraphicPatches.disAlchemyCounter.fleshCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -294,7 +294,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= CostmaniaPlugin.disAlchemyCounter.metalCount;
+            return cardCost <= Patches.CostGraphicPatches.disAlchemyCounter.metalCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -332,7 +332,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= CostmaniaPlugin.disAlchemyCounter.elixirCount;
+            return cardCost <= Patches.CostGraphicPatches.disAlchemyCounter.elixirCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)

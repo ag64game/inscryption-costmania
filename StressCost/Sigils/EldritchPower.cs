@@ -24,7 +24,7 @@ namespace StressCost.Sigils
             yield return new WaitForSeconds(0.2f);
             try
             {
-                CostmaniaPlugin.disAlchemyCounter.AddDies();
+                Patches.CostGraphicPatches.disAlchemyCounter.AddDies();
             }
             catch { }
             yield return new WaitForSeconds(0.3f);

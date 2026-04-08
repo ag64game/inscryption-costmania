@@ -31,7 +31,7 @@ namespace StressCost.Cost
             set
             {
                 __maxrank = value;
-                try { CostmaniaPlugin.disValorCounter.DisplayValue((int)Cost.ValorCost.MaxRank); } catch { }
+                try { Patches.CostGraphicPatches.disValorCounter.DisplayValue((int)Cost.ValorCost.MaxRank); } catch { }
             }
         }
 
