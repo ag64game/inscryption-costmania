@@ -80,7 +80,7 @@ namespace StressCost
             harmony.PatchAll(typeof(Patches.PackPatches));
 
             Patches.PackPatches.SetupStarterDecks();
-
+            
             config3DAlchemy = base.Config.Bind<bool>("Alchemy in 3D", "Active", false, "Whether Alchemy dies should be rolled in the 3D acts, won't display them though");
             config3DStress = base.Config.Bind<bool>("Stress in 3D", "Active", false, "Whether the Stress Counter should be active in the 3D acts, won't display it though");
             config3DStardust = base.Config.Bind<bool>("Stardust in 3D", "Active", false, "Whether the Stardust Counter should be active in the 3D acts, won't display it though");

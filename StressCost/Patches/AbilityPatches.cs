@@ -52,7 +52,7 @@ namespace StressCost.Patches
             if (__instance is StressActivatedAbility)
             {
                 Cost.StressCost.stressCounter += (__instance as StressActivatedAbility).StressCost;
-                if ((__instance as StressActivatedAbility).StressCost > 0) foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlots.FindAll(slot => slot.Card != null)) OnStressCounterChange(slot.Card, enumerator);
+                if ((__instance as StressActivatedAbility).StressCost > 0 && enumerator != null) foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlots.FindAll(slot => slot.Card != null)) OnStressCounterChange(slot.Card, enumerator);
             }
 
             yield return enumerator;
@@ -97,7 +97,7 @@ namespace StressCost.Patches
             Console.WriteLine(enumerator == null);
 
             try { yield return enumerator; } finally { }
-            yield break;
+            yield return true;
         }
 
         [HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.Die))]

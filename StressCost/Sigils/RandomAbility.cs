@@ -19,6 +19,9 @@ namespace StressCost.Sigils
         public override IEnumerator OnDrawn()
         {
             yield return base.OnDrawn();
+            Card.AddTemporaryMod(new CardModificationInfo(AbilityManager.AllAbilityInfos[UnityEngine.Random.Range(0, AbilityManager.AllAbilityInfos.Count)].ability));
+            Card.AddTemporaryMod(new CardModificationInfo(AbilityManager.AllAbilityInfos[UnityEngine.Random.Range(0, AbilityManager.AllAbilityInfos.Count)].ability));
+            Card.Anim.StrongNegationEffect();
             Card.Status.hiddenAbilities.Add(Ability);
         }
 
@@ -26,7 +29,7 @@ namespace StressCost.Sigils
         {
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Random Ability",
-                "When [creature] is drawn, this sigil is changed to a new one at random.",
+                "When [creature] is drawn, this sigil is replaced by 2 others at random.",
                 typeof(AbilRandomAbility),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_randomability.png");
 

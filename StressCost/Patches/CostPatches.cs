@@ -46,6 +46,7 @@ namespace StressCost.Patches
     internal class CostPatches
     {
         public static bool dontPay = false;
+        public static bool isPlayerTwo = false;
 
 
         public static void Update()
@@ -64,7 +65,7 @@ namespace StressCost.Patches
                     if (card.Info.GetExtendedPropertyAsInt("StressCost") > 0 && (CostmaniaPlugin.config3DStress.Value || SaveManager.SaveFile.IsPart2))
                     {
                         Cost.StressCost.stressCounter += card.Info.GetExtendedPropertyAsInt("StressCost").Value;
-                        foreach (CardSlot fearSlot in __instance.AllSlots.FindAll(slot => slot.Card != null && slot.Card.Info.abilities.Count != 0)) yield return Patches.AbilityPatches.OnStressCounterChange(fearSlot.Card, enumerator);
+                        if (enumerator != null) foreach (CardSlot fearSlot in __instance.AllSlots.FindAll(slot => slot.Card != null && slot.Card.Info.abilities.Count != 0)) yield return Patches.AbilityPatches.OnStressCounterChange(fearSlot.Card, enumerator);
                     }
 
                     if (CostmaniaPlugin.config3DAlchemy.Value || SaveManager.SaveFile.IsPart2)
@@ -213,6 +214,34 @@ namespace StressCost.Patches
         public static void EndAbilPay(AbilityBehaviour __instance)
         {
             dontPay = false;
+        }
+
+
+        [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.DoUpkeepPhase))]
+        [HarmonyPostfix]
+        public static IEnumerator SwitchPlayers(IEnumerator enumerator, TurnManager __instance, bool playerUpkeep)
+        {
+            if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("tvflabs.inscryption.MultiplayerMod"))
+            {
+                if (__instance.TurnNumber > 1)
+                {
+                    Patches.CostGraphicPatches.disAlchemyCounter.SwitchPlayer();
+                    Cost.StressCost.SwitchPlayer();
+                }
+            }
+
+            yield return enumerator;
+        }
+
+        [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]
+        [HarmonyPrefix]
+        public static void ResetPlayerTwo(TurnManager __instance)
+        {
+            if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("tvflabs.inscryption.MultiplayerMod"))
+            {
+                Patches.CostGraphicPatches.disAlchemyCounter.ResetPlayerTwo();
+                Cost.StressCost.ResetPlayerTwo();
+            }
         }
     }
 }

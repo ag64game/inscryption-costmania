@@ -5,6 +5,7 @@ using InscryptionAPI.Helpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -27,7 +28,19 @@ namespace StressCost.Sigils
 
             List<CardSlot> all = board.playerSlots;
 
-            yield return board.ChooseTarget(all, all, MovementSuccess, MovementFailed, CursorEnteredSlot, () => false, CursorType.Target);
+            if (Card.OpponentCard)
+            {
+                if (board.playerSlots.Where(slot => slot.Card == null).Count() == 0) selected = board.opponentSlots[UnityEngine.Random.Range(0, board.opponentSlots.Count)];
+                else
+                {
+                    var available = board.playerSlots.Where(slot => slot.Card == null).ToList();
+                    selected = available[UnityEngine.Random.Range(0, available.Count)].opposingSlot;
+                }
+
+            } else
+            {
+                yield return board.ChooseTarget(all, all, MovementSuccess, MovementFailed, CursorEnteredSlot, () => false, CursorType.Target);
+            }
 
             yield return DoMovement(selected);
 

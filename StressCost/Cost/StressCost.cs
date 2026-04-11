@@ -34,12 +34,17 @@ namespace StressCost.Cost
             }
         }
 
+        private static int secondPlayer = 0;
+
         public override string CostName => "StressCost";
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
             return true;
         }
+
+        public static void SwitchPlayer() => (secondPlayer, stressCounter) = (stressCounter, secondPlayer);
+        public static void ResetPlayerTwo() => secondPlayer = 0;
 
         public static Texture2D Texture_3D(int cardCost, CardInfo info, PlayableCard card)
         {

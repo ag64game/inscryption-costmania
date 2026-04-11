@@ -6,6 +6,7 @@ using InscryptionAPI.Card;
 using InscryptionAPI.CardCosts;
 using InscryptionAPI.Helpers;
 using InscryptionCommunityPatch.Card;
+using Sirenix.Serialization.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,7 +49,6 @@ namespace StressCost.Cost
         private void Awake()
         {
             renderer = gameObject.GetComponent<SpriteRenderer>();
-            //gameObject.AddComponent<CardAnimationController>();
 
             Texture2D texture = TextureHelper.GetImageAsTexture($"displaycost_flesh_alchemy_die.png", typeof(CostmaniaPlugin).Assembly);
             fleshSprite = Sprite.Create(
@@ -115,6 +115,10 @@ namespace StressCost.Cost
     public class AlchemyCounter : MonoBehaviour
     {
         private AlchemyDice[] dies = new AlchemyDice[10];
+
+        private static AlchemyValue[] secondPlayer = new AlchemyValue[10];
+        private static bool[] secondPlayerLock = new bool[10];
+
         public int fleshCount
         {
             get
@@ -170,6 +174,8 @@ namespace StressCost.Cost
                     y -= size;
                 }
                 else x += size;
+
+                ResetPlayerTwo();
             }
         }
 
@@ -201,7 +207,6 @@ namespace StressCost.Cost
                 {
                     dies[index].value = (AlchemyValue)UnityEngine.Random.Range(1, 4);
                 }
-                //dies[index].anim.StrongNegationEffect();
             }
         }
 
@@ -228,7 +233,7 @@ namespace StressCost.Cost
 
         private void DepleteDies(AlchemyValue toDrop, int amount)
         {
-            for (int i = 0; i < 10 && amount > 0; i++)
+            for (int i = 0; i < 10 && amount > 0 && dies[i].value != AlchemyValue.Empty; i++)
             {  
                 if (dies[i].value == toDrop && amount > 0)
                 {
@@ -243,8 +248,27 @@ namespace StressCost.Cost
                     i--;
                 }
             }
+        }
 
-            //if (amount > 0) dies[j].value = AlchemyValue.Empty;
+        public void SwitchPlayer()
+        {
+            AlchemyValue[] curPlayer = dies.Select(die => die.value).ToArray();
+            bool[] curPlayerLock = dies.Select(die => die.locked).ToArray();
+
+            for(int i = 0; i < dies.Length; i++)
+            {
+                dies[i].value = secondPlayer[i];
+                dies[i].locked = secondPlayerLock[i];
+            }
+
+            secondPlayer = curPlayer;
+            secondPlayerLock = curPlayerLock;
+        }
+        public void ResetPlayerTwo()
+        {
+            for (int i = 0; i < secondPlayer.Length; i++) secondPlayer[i] = AlchemyValue.Empty;
+            secondPlayer[0] = (AlchemyValue)UnityEngine.Random.Range((int)AlchemyValue.Flesh, (int)AlchemyValue.Elixir + 1);
+            secondPlayer[1] = (AlchemyValue)UnityEngine.Random.Range((int)AlchemyValue.Flesh, (int)AlchemyValue.Elixir + 1);
         }
     }
 
