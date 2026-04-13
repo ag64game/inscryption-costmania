@@ -82,7 +82,7 @@ namespace StressCost.Patches
     internal class DialoguePatches
     {
         private static DialogueSpeaker curSpeaker;
-        private static int tutorialState = 0;
+        private static int tutorialState = 3;
 
         [HarmonyPatch(typeof(DialogueHandler), nameof(DialogueHandler.PlayDialogueEvent))]
         [HarmonyPostfix]
@@ -92,10 +92,11 @@ namespace StressCost.Patches
             if (eventId.Contains("ResourceTutorial"))
             {
                 curSpeaker = speaker;
+                if (!eventId.Contains("2") && !eventId.Contains("3")) tutorialState = 0;
                 if (Singleton<PixelPlayerHand>.Instance.cardsInHand.Any(card => card.Info.GetModPrefix() != null && card.Info.GetModPrefix().Contains(NessecaryCustomTemple())))
                 {
-                    if (tutorialState == 0 || eventId.Contains("2") || eventId.Contains("3")) yield break;
-                    yield return PlayTutorialScene1();
+                    if (eventId.Contains("2") || eventId.Contains("3")) yield break;
+                    else yield return PlayTutorialScene1();
 
                     yield break;
                 }
@@ -243,11 +244,11 @@ namespace StressCost.Patches
         private static List<CustomLine> AlchemyTutorialLines()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("You seem way too interested in these", emote: Emotion.Neutral));
-            ret.Add(GenFromString("\"Creatures\"", emote: Emotion.Anger));
-            ret.Add(GenFromString("To think someone wanted these blights upon nature among my proud beasts", emote: Emotion.Neutral));
-            ret.Add(GenFromString("But I digress", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Allow me to show you how they work", emote: Emotion.Neutral));
+            ret.Add(GenFromString("You seem way too interested in these...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("\"Creatures\".", emote: Emotion.Anger));
+            ret.Add(GenFromString("To think someone wanted these blights upon nature among my proud beasts.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("But I digress...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Allow me to show you how they work.", emote: Emotion.Neutral));
 
             return ret;
         }
@@ -255,9 +256,9 @@ namespace StressCost.Patches
         {
             List<CustomLine> ret = new List<CustomLine>();
             ret.Add(GenFromString("At the beginning of every turn, you receive one Alchemy Die, it's value is one of three...", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Flesh, Metal, and Elixir", emote: Emotion.Anger));
-            ret.Add(GenFromString("The value on the die changes every turn it is not spent", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Though you may consider pressing on a die to Lock it, such that it's value remains still", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Flesh, Metal, and Elixir.", emote: Emotion.Anger));
+            ret.Add(GenFromString("The value on the die changes every turn it is not spent.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Though you may consider pressing on a die to Lock it, such that it's value remains still.", emote: Emotion.Neutral));
 
             return ret;
         }
@@ -265,10 +266,10 @@ namespace StressCost.Patches
         {
             List<CustomLine> ret = new List<CustomLine>();
             ret.Add(GenFromString("You played the card?", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Excellent", emote: Emotion.Anger));
-            ret.Add(GenFromString("Truly Excellent", emote: Emotion.Neutral));
-            ret.Add(GenFromString("I eargerly await your thrashing amidst my cabin walls", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Good luck", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Excellent.", emote: Emotion.Anger));
+            ret.Add(GenFromString("Truly Excellent.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I eargerly await your thrashing amidst my cabin walls.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Good luck.", emote: Emotion.Neutral));
 
             return ret;
         }
@@ -277,19 +278,19 @@ namespace StressCost.Patches
         {
             List<CustomLine> ret = new List<CustomLine>();
             ret.Add(GenFromString("Intriguing! I see you have elected to deploy the modded Paranoia cards!", emote: Emotion.Neutral));
-            ret.Add(GenFromString("I'll have you know the Scrybe in charge of these is quite the lovely individual", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I'll have you know the Scrybe in charge of these is quite the lovely individual.", emote: Emotion.Neutral));
             ret.Add(GenFromString("I suppose then... That it is time for you...", emote: Emotion.Neutral));
-            ret.Add(GenFromString("To learn FEAR", emote: Emotion.Anger));
+            ret.Add(GenFromString("To learn FEAR!", emote: Emotion.Anger));
 
             return ret;
         }
         private static List<CustomLine> StressTutorialLines2()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("These cards cost \"Stress\", you may play them whenever you wish", emote: Emotion.Neutral));
+            ret.Add(GenFromString("These cards cost \"Stress\", you may play them whenever you wish.", emote: Emotion.Neutral));
             ret.Add(GenFromString("However!", emote: Emotion.Anger));
-            ret.Add(GenFromString("Playing one of them will add their \"Cost\" to the dastardly Stress Counter", emote: Emotion.Anger));
-            ret.Add(GenFromString("And when you ring the bell, you will take damage equal to half of the number shown on the Stress Counter", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Playing one of them will add their \"Cost\" to the dastardly Stress Counter.", emote: Emotion.Anger));
+            ret.Add(GenFromString("And when you ring the bell, you will take damage equal to half of the number on the Counter.", emote: Emotion.Neutral));
             ret.Add(GenFromString("Then it will drop by 2!", emote: Emotion.Neutral));
 
             return ret;
@@ -298,8 +299,8 @@ namespace StressCost.Patches
         {
             List<CustomLine> ret = new List<CustomLine>();
             ret.Add(GenFromString("Notice how the Stress Counter went up?", emote: Emotion.Neutral));
-            ret.Add(GenFromString("I believe it is time for you to strike hard", emote: Emotion.Neutral));
-            ret.Add(GenFromString("For it is a race against your own nerves, beating you from behind your back", emote: Emotion.Anger));
+            ret.Add(GenFromString("I believe it is time for you to strike.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("For it is a race against your own nerves, beating you from behind your back.", emote: Emotion.Anger));
             ret.Add(GenFromString("Careful not to kill yourself challenger!", emote: Emotion.Neutral));
 
             return ret;
@@ -310,26 +311,27 @@ namespace StressCost.Patches
             List<CustomLine> ret = new List<CustomLine>();
             ret.Add(GenFromString("Oh my god you stupid moron you actually WANT these?", emote: Emotion.Anger));
             ret.Add(GenFromString("You have some kind of allergy to decent decks? or are you just that dumb?", emote: Emotion.Anger));
-            ret.Add(GenFromString("Whatever. I'll just show you how they work", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Whatever.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I'll just show you how they work.", emote: Emotion.Neutral));
 
             return ret;
         }
         private static List<CustomLine> SpaceTutorialLines2()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("Space cards cost \"Stardust\". You gain one every time you place a card", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Then at the end of the turn you lose all the Stardust", emote: Emotion.Neutral));
-            ret.Add(GenFromString("It's RNG HELL if you don't get any good cards", emote: Emotion.Anger));
-            ret.Add(GenFromString("But if it's any consolation prize they're at least not spent when a Space card is played", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Space cards cost \"Stardust\". You gain one every time you place a card.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Then at the end of the turn you lose all the Stardust.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("It's RNG HELL if you don't get any good cards.", emote: Emotion.Anger));
+            ret.Add(GenFromString("But if it's any consolation prize they're at least not spent playing Stardust cards.", emote: Emotion.Neutral));
 
             return ret;
         }
         private static List<CustomLine> SpaceTutorialLines3()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("Congratulations! You played a card", emote: Emotion.Neutral));
-            ret.Add(GenFromString("I'm so proud of you", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Just leave me to my work already", emote: Emotion.Anger));
+            ret.Add(GenFromString("Congratulations! You played a card"!, emote: Emotion.Neutral));
+            ret.Add(GenFromString("I'm so proud of you.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Just leave me to my work already.", emote: Emotion.Anger));
 
             return ret;
         }
@@ -337,29 +339,29 @@ namespace StressCost.Patches
         private static List<CustomLine> ValorTutorialLines()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("Ah, you have invested in Valor I see, a curious set of cards indeed", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Ah, you have invested in Valor I see, a curious set of cards indeed.", emote: Emotion.Neutral));
             ret.Add(GenFromString("You have been modding the game I presume...", emote: Emotion.Anger));
             ret.Add(GenFromString("Regardless...", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Allow me to explain to you it's workings", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Allow me to explain to you it's workings.", emote: Emotion.Neutral));
 
             return ret;
         }
         private static List<CustomLine> ValorTutorialLines2()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("You may not see it now, but each cards you play now bears a \"Valor Rank\"", emote: Emotion.Neutral));
-            ret.Add(GenFromString("When a card posseses a certain rank, cards which cost equal or less Valor may be played", emote: Emotion.Neutral));
-            ret.Add(GenFromString("The grey stat on a card, such as those on the War Banners, represents their Rank", emote: Emotion.Neutral));
+            ret.Add(GenFromString("You may not see it now, but each cards you play now bears a \"Valor Rank\".", emote: Emotion.Neutral));
+            ret.Add(GenFromString("When a card posseses a certain rank, cards which cost equal or less Valor may be played.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("The grey stat on a card, such as those on the War Banners, represents their Rank.", emote: Emotion.Neutral));
 
             return ret;
         }
         private static List<CustomLine> ValorTutorialLines3()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("Now, keep this card until the end of the turn and you may get the chance to Promote it", emote: Emotion.Neutral));
-            ret.Add(GenFromString("One can promote any card they control that is not a Terrain card, increasing their Valor Rank by 1", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Prey tell you will take these warriors atop my tower where I lie in wait", emote: Emotion.Neutral));
-            ret.Add(GenFromString("Safe travels", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Now, keep this card until the end of the turn and you may get the chance to Promote it.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("One can promote any card they control that is not a Terrain card, increasing their Valor Rank by 1.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Prey tell you will take these warriors atop my tower where I lie in wait.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Safe travels.", emote: Emotion.Neutral));
 
             return ret;
         }
