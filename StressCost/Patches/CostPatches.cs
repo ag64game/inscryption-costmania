@@ -8,6 +8,7 @@ using HarmonyLib;
 using InscryptionAPI.Ascension;
 using InscryptionAPI.Boons;
 using InscryptionAPI.Card;
+using InscryptionAPI.Dialogue;
 using InscryptionAPI.Encounters;
 using InscryptionAPI.Helpers;
 using InscryptionAPI.Helpers.Extensions;

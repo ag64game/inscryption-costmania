@@ -79,6 +79,7 @@ namespace StressCost
             harmony.PatchAll(typeof(Patches.CostGraphicPatches));
             harmony.PatchAll(typeof(Patches.CostPatches));
             harmony.PatchAll(typeof(Patches.PackPatches));
+            harmony.PatchAll(typeof(Patches.DialoguePatches));
 
             Patches.PackPatches.SetupStarterDecks();
             
