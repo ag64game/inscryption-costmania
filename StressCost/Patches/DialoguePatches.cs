@@ -32,6 +32,7 @@ using InscryptionAPI.PixelCard;
 using InscryptionAPI.PixelCard;
 using InscryptionAPI.Regions;
 using InscryptionAPI.Regions;
+using InscryptionAPI.Saves;
 using InscryptionAPI.Sound;
 using InscryptionAPI.Sound;
 using InscryptionAPI.Triggers;
@@ -81,7 +82,8 @@ namespace StressCost.Patches
 {
     internal class DialoguePatches
     {
-        private static DialogueSpeaker curSpeaker;
+        private static DialogueSpeaker curSpeaker = new DialogueSpeaker();
+        private static bool tutorialPlaying = false;
         private static int tutorialState = 3;
 
         [HarmonyPatch(typeof(DialogueHandler), nameof(DialogueHandler.PlayDialogueEvent))]
@@ -91,21 +93,16 @@ namespace StressCost.Patches
             Debug.Log(eventId);
             if (eventId.Contains("ResourceTutorial"))
             {
-                curSpeaker = speaker;
-                if (!eventId.Contains("2") && !eventId.Contains("3")) tutorialState = 0;
-                if (Singleton<PixelPlayerHand>.Instance.cardsInHand.Any(card => card.Info.GetModPrefix() != null && card.Info.GetModPrefix().Contains(NessecaryCustomTemple())))
+                
+                if (!eventId.Contains("2") && !eventId.Contains("3"))
                 {
-                    if (eventId.Contains("2") || eventId.Contains("3")) yield break;
-                    else yield return PlayTutorialScene1();
-
-                    yield break;
+                    curSpeaker = speaker;
+                    if ((!DialogueEventsData.EventIsPlayed("ResourceTutorialBlood") &&
+                    !DialogueEventsData.EventIsPlayed("ResourceTutorialBones") && !DialogueEventsData.EventIsPlayed("ResourceTutorialEnergy1") &&
+                    !DialogueEventsData.EventIsPlayed("ResourceTutorialGems1"))) tutorialState = 0;
                 }
-                else yield return enumerator;
             }
-            else
-            {
-                yield return enumerator;
-            } 
+            yield return enumerator;
         }
 
         private static string NessecaryCustomTemple()
@@ -137,8 +134,7 @@ namespace StressCost.Patches
         {
             yield return enumerator;
 
-            if (SaveManager.SaveFile.IsPart2 && tutorialState == 0 &&
-                Singleton<PixelPlayerHand>.Instance.cardsInHand.Any(card => card.Info.GetModPrefix() != null && card.Info.GetModPrefix().Contains(NessecaryCustomTemple())))
+            if (SaveManager.SaveFile.IsPart2 && tutorialState == 0 && __instance.TurnNumber > 1 && HasTempleInBattle())
             {
                 yield return PlayTutorialScene1();
             }
@@ -161,6 +157,7 @@ namespace StressCost.Patches
         [HarmonyPostfix]
         public static IEnumerator TutorialScene3(IEnumerator enumerator, BoardManager __instance, PlayableCard card, CardSlot slot)
         {
+            StoryEventsData.SetEventCompleted(StoryEvent.GBCIntroCompleted, saveToFile: true);
             yield return enumerator;
 
             if (tutorialState == 2 && card.Info.GetModPrefix() != null && card.Info.GetModPrefix().Contains(NessecaryCustomTemple()))
@@ -168,6 +165,19 @@ namespace StressCost.Patches
                 yield return new WaitForSeconds(0.6f);
                 yield return PlayTutorialScene3();
             }
+        }
+
+        [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]
+        [HarmonyPrefix]
+        public static void ResetTutorialState(TurnManager __instance)
+        {
+            tutorialState = 3;
+        }
+
+        private static bool HasTempleInBattle()
+        {
+            return Singleton<PixelPlayerHand>.Instance.cardsInHand.Any(card => card.Info.GetModPrefix() != null && card.Info.GetModPrefix().Contains(NessecaryCustomTemple())) ||
+                Singleton<BoardManager>.Instance.playerSlots.Any(slot => slot.Card != null && slot.Card.Info.GetModPrefix() != null && slot.Card.Info.GetModPrefix().Contains(NessecaryCustomTemple()));
         }
 
         public static IEnumerator PlayTutorialScene1()
@@ -190,7 +200,7 @@ namespace StressCost.Patches
             }
 
             DialogueEvent e = DialogueManager.GenerateEvent(CostmaniaPlugin.GUID, "introduceNewCost1", lines);
-            yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(e.id, TextBox.Style.Nature, curSpeaker);
+            yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(e.id, DialogueManager.GetStyleFromAmbition(), curSpeaker);
             tutorialState = 1;
         }
         public static IEnumerator PlayTutorialScene2()
@@ -213,7 +223,7 @@ namespace StressCost.Patches
             }
 
             DialogueEvent e2 = DialogueManager.GenerateEvent(CostmaniaPlugin.GUID, "introduceNewCost2", lines2);
-            yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(e2.id, TextBox.Style.Nature, curSpeaker);
+            yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(e2.id, DialogueManager.GetStyleFromAmbition(), curSpeaker);
             tutorialState = 2;
         }
         public static IEnumerator PlayTutorialScene3()
@@ -236,9 +246,8 @@ namespace StressCost.Patches
             }
 
             DialogueEvent e3 = DialogueManager.GenerateEvent(CostmaniaPlugin.GUID, "introduceNewCost3", lines3);
-            yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(e3.id, TextBox.Style.Nature, curSpeaker);
-            Singleton<GBCEncounterManager>.Instance.SetCardBattleMechanicsLearned();
             tutorialState = 3;
+            yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(e3.id, DialogueManager.GetStyleFromAmbition(), curSpeaker);
         }
 
         private static List<CustomLine> AlchemyTutorialLines()
@@ -309,6 +318,7 @@ namespace StressCost.Patches
         private static List<CustomLine> SpaceTutorialLines()
         {
             List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("Wait...", emote: Emotion.Neutral));
             ret.Add(GenFromString("Oh my god you stupid moron you actually WANT these?", emote: Emotion.Anger));
             ret.Add(GenFromString("You have some kind of allergy to decent decks? or are you just that dumb?", emote: Emotion.Anger));
             ret.Add(GenFromString("Whatever.", emote: Emotion.Neutral));
@@ -349,9 +359,9 @@ namespace StressCost.Patches
         private static List<CustomLine> ValorTutorialLines2()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("You may not see it now, but each cards you play now bears a \"Valor Rank\".", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Each card you possess now has a stat studded in grey.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("That is their \"Valor Rank\".", emote: Emotion.Neutral));
             ret.Add(GenFromString("When a card posseses a certain rank, cards which cost equal or less Valor may be played.", emote: Emotion.Neutral));
-            ret.Add(GenFromString("The grey stat on a card, such as those on the War Banners, represents their Rank.", emote: Emotion.Neutral));
 
             return ret;
         }
@@ -359,7 +369,8 @@ namespace StressCost.Patches
         {
             List<CustomLine> ret = new List<CustomLine>();
             ret.Add(GenFromString("Now, keep this card until the end of the turn and you may get the chance to Promote it.", emote: Emotion.Neutral));
-            ret.Add(GenFromString("One can promote any card they control that is not a Terrain card, increasing their Valor Rank by 1.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("You may choose any sacrificable card to increase it's Valor Rank by 1.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Just like you did last turn.", emote: Emotion.Neutral));
             ret.Add(GenFromString("Prey tell you will take these warriors atop my tower where I lie in wait.", emote: Emotion.Neutral));
             ret.Add(GenFromString("Safe travels.", emote: Emotion.Neutral));
 

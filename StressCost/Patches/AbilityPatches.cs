@@ -77,27 +77,29 @@ namespace StressCost.Patches
         public static IEnumerator OnStressCounterChange(PlayableCard card, IEnumerator enumerator)
         {
             Console.WriteLine(card == null);
-            if (card.LacksAllAbilities()) yield return enumerator;
-
-            if (card.HasAbility(AbilFearmonger.ability))
+            if (card != null)
             {
-                CardSlot opponent = card.Slot.opposingSlot;
+                if (card.LacksAllAbilities()) yield return enumerator;
 
-                card.Anim.PlayAttackAnimation(false, opponent);
-                yield return new WaitForSeconds(0.175f);
-
-                if (opponent.Card != null && !opponent.Card.FaceDown) yield return opponent.Card.TakeDamage(card.Attack, card);
-                else
+                if (card.HasAbility(AbilFearmonger.ability))
                 {
+                    CardSlot opponent = card.Slot.opposingSlot;
+
+                    card.Anim.PlayAttackAnimation(false, opponent);
                     yield return new WaitForSeconds(0.175f);
-                    yield return Singleton<LifeManager>.Instance.ShowDamageSequence(card.Attack, card.Attack, card.OpponentCard, 0.3f, null, 0.15f, true);
+
+                    if (opponent.Card != null && !opponent.Card.FaceDown) yield return opponent.Card.TakeDamage(card.Attack, card);
+                    else
+                    {
+                        yield return new WaitForSeconds(0.175f);
+                        yield return Singleton<LifeManager>.Instance.ShowDamageSequence(card.Attack, card.Attack, card.OpponentCard, 0.3f, null, 0.15f, true);
+                    }
                 }
             }
 
             Console.WriteLine(enumerator == null);
 
-            try { yield return enumerator; } finally { }
-            yield return true;
+            yield return enumerator;
         }
 
         [HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.Die))]
