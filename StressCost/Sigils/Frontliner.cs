@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using GBC;
+using StressCost.Cost;
 namespace StressCost.Sigils
 {
     public class AbilFrontliner : AbilityBehaviour
@@ -22,10 +23,7 @@ namespace StressCost.Sigils
             yield return new WaitForSeconds(0.2f);
             yield return Singleton<TextBox>.Instance.ShowUntilInput($"{Card.Info.displayedName}'s bravery amplified it's morale", (GBC.TextBox.Style)Card.Info.temple);
 
-            var mod = new CardModificationInfo(0, 0);
-            mod.SetExtendedProperty("ValorRank", 1);
-
-            base.Card.AddTemporaryMod(mod);
+            base.Card.AddValorRank();
 
             yield return new WaitForSeconds(0.2f);
             yield return LearnAbility(0.2f);

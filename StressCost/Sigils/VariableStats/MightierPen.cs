@@ -1,6 +1,7 @@
 ﻿using DiskCardGame;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers;
+using StressCost.Cost;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,8 +19,8 @@ namespace StressCost.Sigils.VariableStats
         public override int[] GetStatValues()
         {
             int power = 0;
-            try {   power += Singleton<BoardManager>.Instance.GetAdjacent(base.PlayableCard.Slot, true).Card.Info.GetExtendedPropertyAsInt("ValorRank").Value; } catch { Console.WriteLine("Left failed"); }
-            try { power += Singleton<BoardManager>.Instance.GetAdjacent(base.PlayableCard.Slot, false).Card.Info.GetExtendedPropertyAsInt("ValorRank").Value; } catch { Console.WriteLine("Right failed"); }
+            try { power += Singleton<BoardManager>.Instance.GetAdjacent(base.PlayableCard.Slot, true).Card.ValorRank(); } catch { Console.WriteLine("Left failed"); }
+            try { power += Singleton<BoardManager>.Instance.GetAdjacent(base.PlayableCard.Slot, false).Card.ValorRank(); } catch { Console.WriteLine("Right failed"); }
 
             return new int[] { power, 0 };
         }

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using UnityEngine;
+using static InscryptionAPI.Slots.SlotModificationManager;
 
 namespace StressCost.Cost
 {
@@ -46,21 +47,8 @@ namespace StressCost.Cost
 
                 foreach (CardSlot slot in validSlots)
                 {
-                    int? curStand = slot.Card.Info.GetExtendedPropertyAsInt("ValorRank");
-                    if (curStand == null) curStand = 0;
-
-                    int? curMod = slot.Card.TemporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
-                    if (curMod == null) curMod = 0;
-
-                    int cur = curStand.Value + curMod.Value;
-
-                    if (cur > max)
-                    {
-                        maxCard = slot;
-                        max = cur;
-                    }
-                        
-                        
+                    int curRank = slot.Card.ValorRank();
+                    if (curRank > max) max = curRank;    
                 }
 
                 MaxRank = max;
@@ -100,6 +88,55 @@ namespace StressCost.Cost
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
             return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_valor.png", typeof(CostmaniaPlugin).Assembly));
+        }
+    }
+
+    public static class CardValorExtension
+    {
+        public static int ValorRank(this PlayableCard card)
+        {
+            int? baseVal = card.Info.GetExtendedPropertyAsInt("ValorRank");
+            if (baseVal == null) baseVal = 0;
+
+            int? modVal = card.temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
+            if (modVal == null) modVal = 0;
+
+            return modVal.Value + baseVal.Value;
+        }
+
+        public static void AddValorRank(this PlayableCard card, int amount = 1)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                var mod = new CardModificationInfo(0, 0);
+                mod.SetExtendedProperty("ValorRank", 1);
+
+                card.AddTemporaryMod(mod);
+            }
+        }
+
+        public static int ValorRank(this CardInfo card)
+        {
+            int? baseVal = card.GetExtendedPropertyAsInt("ValorRank");
+            if (baseVal == null) baseVal = 0;
+
+            return baseVal.Value;
+        }
+
+        public static int ValorRank(this SelectableCard card)
+        {
+            int? baseVal = card.Info.GetExtendedPropertyAsInt("ValorRank");
+            if (baseVal == null) baseVal = 0;
+
+            return baseVal.Value;
+        }
+
+        public static int ValorRank(this PixelSelectableCard card)
+        {
+            int? baseVal = card.Info.GetExtendedPropertyAsInt("ValorRank");
+            if (baseVal == null) baseVal = 0;
+
+            return baseVal.Value;
         }
     }
 }

@@ -6,6 +6,7 @@ using InscryptionAPI.Card;
 using InscryptionAPI.CardCosts;
 using InscryptionAPI.Helpers;
 using InscryptionCommunityPatch.Card;
+using JetBrains.Annotations;
 using Sirenix.Serialization.Utilities;
 using System;
 using System.Collections;

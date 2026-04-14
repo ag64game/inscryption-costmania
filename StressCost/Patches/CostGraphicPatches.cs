@@ -52,10 +52,12 @@ namespace StressCost.Patches
 
         public static void Update()
         {
-            if (SaveManager.SaveFile.IsPart2) 
+            if (SaveManager.SaveFile.IsPart2)
+            {
                 foreach (GameObject card in Array.FindAll(CostmaniaPlugin.FindObjectsOfType<GameObject>(), obj => obj.name.Contains("Card (")))
                     try { UpdateValorRank(card.gameObject); }
                     catch { }
+            }
         }
 
         public static void UpdateValorRank(GameObject card)
@@ -64,36 +66,23 @@ namespace StressCost.Patches
             {
                 GameObject statsSect = card.FindChild("Base").FindChild("PixelSnap").FindChild("CardElements").FindChild("PixelCardStats");
                 GameObject rankText = statsSect.FindChild("ValorRank");
-                CardInfo info;
-
-                try { info = card.GetComponent<PixelSelectableCard>().Info; }
-                catch
-                {
-                    try { info = card.GetComponent<PixelPlayableCard>().Info; }
-                    catch
-                    {
-                        try { info = card.GetComponent<SelectableCard>().Info; }
-                        catch { info = card.GetComponent<PlayableCard>().Info; }
-                    }
-                }
-
-                int? baseVal = info.GetExtendedPropertyAsInt("ValorRank");
-                if (baseVal == null) baseVal = 0;
-
                 PixelText statText = rankText.GetComponent<PixelText>();
-                try
-                {
-                    int? modVal = info.GetPlayableCard().temporaryMods.Sum(mod => mod.GetExtendedPropertyAsInt("ValorRank"));
-                    if (modVal == null) modVal = 0;
+                CardInfo info;
+                int valorRank = 0;
 
-                    if (baseVal + modVal > 0) statText.SetText(Convert.ToString(baseVal + modVal));
-                    else statText.SetText("");
-                }
-                catch
+                if (card.GetComponent<PixelSelectableCard>() != null)
                 {
-                    if (baseVal > 0) statText.SetText(Convert.ToString(baseVal));
-                    else statText.SetText("");
+                    PixelSelectableCard selectableCardGBC = card.GetComponent<PixelSelectableCard>();
+                    valorRank = selectableCardGBC.ValorRank();
                 }
+                else if (card.GetComponent<PixelPlayableCard>() != null)
+                {
+                    PlayableCard playableCard = card.GetComponent<PixelPlayableCard>();
+                    valorRank = playableCard.ValorRank();
+                }
+
+                if (valorRank > 0) statText.SetText(Convert.ToString(valorRank));
+                else statText.SetText("");
             }
         }
 

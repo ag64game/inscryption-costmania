@@ -134,12 +134,7 @@ namespace StressCost.Patches
 
             private static void PromotionSuccess(CardSlot slot)
             {
-                var mod = new CardModificationInfo(0, 0);
-                mod.SetExtendedProperty("ValorRank", 1);
-
-                slot.Card.AddTemporaryMod(mod);
-
-                Cost.ValorCost.SetMaxRank();
+                slot.Card.AddValorRank();
             }
 
             private static void PromotionFailed(CardSlot slot)
