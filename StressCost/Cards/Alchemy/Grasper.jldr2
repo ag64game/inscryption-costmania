@@ -5,7 +5,7 @@
   "metaCategories": [ "GBCPlayable", "GBCPack" ],
   "temple": "Nature",
   "baseAttack": 1,
-  "baseHealth": 3,
+  "baseHealth": 5,
   "abilities": [ "Reach" ],
   "pixelTexture":"pixel_grasper.png",
   "extensionProperties": {

@@ -2,6 +2,7 @@
 using GBC;
 using InscryptionAPI.Card;
 using InscryptionAPI.Helpers;
+using StressCost.Cost;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace StressCost.Sigils
             yield return new WaitForSeconds(0.2f);
             try
             {
-                Patches.CostGraphicPatches.disAlchemyCounter.AddDies();
+                AlchemyCounter.AddDies();
             }
             catch { }
             yield return new WaitForSeconds(0.3f);
@@ -41,6 +42,7 @@ namespace StressCost.Sigils
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_eldritchpower.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_eldritchpower.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPowerlevel(2);
             AbilEldritchPower.ability = info.ability;
         }
     }

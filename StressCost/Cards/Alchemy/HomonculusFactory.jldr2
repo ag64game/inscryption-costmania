@@ -1,0 +1,16 @@
+{
+  "name": "HomonculusFactory",
+  "modPrefix": "Alchemy",
+  "displayedName": "Homonculus Factory",
+  "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
+  "temple": "Nature",
+  "baseAttack": 0,
+  "baseHealth": 5,
+  "pixelTexture":"pixel_homonculusfactory.png",
+  "abilities": [ "StressSigils.Production Line" ],
+  "extensionProperties": {
+  "FleshCost": "2",
+  "MetalCost": "2"
+  },
+  "appearanceBehaviour": ["RareCardBackground"]
+}

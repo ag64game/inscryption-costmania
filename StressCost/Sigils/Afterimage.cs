@@ -68,6 +68,7 @@ namespace StressCost.Sigils
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_afterimage.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_afterimage.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPowerlevel(4);
             AbilAfterimage.ability = info.ability;
         }
     }

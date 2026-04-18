@@ -120,8 +120,6 @@ namespace StressCost.Patches
             else
                 pageTrackers = new int[8];
 
-            Console.WriteLine(pageTrackers.Length);
-
             List<List<CardInfo>> res = new List<List<CardInfo>>();
             int index = 0;
 
@@ -140,10 +138,10 @@ namespace StressCost.Patches
             //Injects Alchemy cards
             List<CardInfo> alchemyCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Alchemy"));
             alchemyCards = alchemyCards.OrderBy(info => (info.metaCategories.Contains(CardMetaCategory.Rare) ? 1 : 100))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("ElixirCost")))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("MetalCost")))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("FleshCost")))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("FleshCost") + info.GetExtendedPropertyAsInt("MetalCost") + info.GetExtendedPropertyAsInt("ElixirCost")))
+                .ThenBy(info => (info.ElixirCost()))
+                .ThenBy(info => (info.MetalCost()))
+                .ThenBy(info => (info.FleshCost()))
+                .ThenBy(info => (info.FleshCost() + info.MetalCost() + info.ElixirCost()))
                 .ThenBy(info => (info.DisplayedNameEnglish))
                 .ToList();
 
@@ -154,7 +152,7 @@ namespace StressCost.Patches
             //Injects Stress cards
             List<CardInfo> stressCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Stress"));
             stressCards = stressCards.OrderBy(info => (info.metaCategories.Contains(CardMetaCategory.Rare) ? 1 : 100))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("StressCost")))
+                .ThenBy(info => (info.StressCost()))
                 .ThenBy(info => (info.DisplayedNameEnglish))
                 .ToList();
 
@@ -165,7 +163,7 @@ namespace StressCost.Patches
             //Injects Space cards
             List<CardInfo> spaceCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Space"));
             spaceCards = spaceCards.OrderBy(info => (info.metaCategories.Contains(CardMetaCategory.Rare) ? 1 : 100))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("StardustCost")))
+                .ThenBy(info => (info.StardustCost()))
                 .ThenBy(info => (info.DisplayedNameEnglish))
                 .ToList();
 
@@ -176,7 +174,7 @@ namespace StressCost.Patches
             //Injects Valor cards
             List<CardInfo> valorCards = cards.FindAll(info => info.GetModPrefix() != null && info.GetModPrefix().Contains("Valor"));
             valorCards = valorCards.OrderBy(info => (info.metaCategories.Contains(CardMetaCategory.Rare) ? 1 : 100))
-                .ThenBy(info => (info.GetExtendedPropertyAsInt("ValorCost")))
+                .ThenBy(info => (info.ValorCost()))
                 .ThenBy(info => (info.DisplayedNameEnglish))
                 .ToList();
 
@@ -186,8 +184,8 @@ namespace StressCost.Patches
 
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("mrfantastik.inscryption.infact2"))
             {
-                //List<CardInfo> boons = cards.FindAll(info => info.metaCategories.Contains(infact2.Plugin.BoonsPool));
-                List<CardInfo> boons = new List<CardInfo>();
+                List<CardInfo> boons = cards.FindAll(info => info.metaCategories.Any(caterogy => caterogy.Equals(2729)));
+                //List<CardInfo> boons = new List<CardInfo>();
                 InjectToPixelMenu(ref res, boons);
 
                 pageTrackers[8] = index;

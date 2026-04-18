@@ -7,11 +7,15 @@ using InscryptionAPI.CardCosts;
 using InscryptionAPI.Helpers;
 using InscryptionCommunityPatch.Card;
 using JetBrains.Annotations;
+using Newtonsoft.Json.Bson;
 using Sirenix.Serialization.Utilities;
+using StressCost.Patches;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Xml.Serialization;
@@ -109,43 +113,58 @@ namespace StressCost.Cost
 
         public void OnMouseDown()
         {
-            if (value != AlchemyValue.Empty) locked = !locked;
+            if (value != AlchemyValue.Empty)
+            {
+                if (!locked) AlchemyCounter.GetLastClickedDiceId(this);
+                locked = !locked;
+            }
         }
     }
 
     public class AlchemyCounter : MonoBehaviour
     {
-        private AlchemyDice[] dies = new AlchemyDice[10];
+        private static AlchemyDice[] dies = new AlchemyDice[10];
 
         private static AlchemyValue[] secondPlayer = new AlchemyValue[10];
         private static bool[] secondPlayerLock = new bool[10];
+        public static int lastClicked = 0;
+        private static bool dieClicked = false;
+        private static bool waitingForClick = false;
 
-        public int fleshCount
+        public static int fleshCount
         {
             get
             {
                 return dies.Where(die => die.value == AlchemyValue.Flesh).Count();
             }
         }
-        public int metalCount
+        public static int metalCount
         {
             get
             {
                 return dies.Where(die => die.value == AlchemyValue.Metal).Count();
             }
         }
-        public int elixirCount
+        public static int elixirCount
         {
             get
             {
                 return dies.Where(die => die.value == AlchemyValue.Elixir).Count();
             }
         }
-        int awakeCount
+        public static int awakeCount
         {
             get
             {
                 return dies.Where(die => die.value != AlchemyValue.Empty).Count();
+            }
+        }
+
+        public static int awakeCountNotLocked
+        {
+            get
+            {
+                return dies.Where(die => die.value != AlchemyValue.Empty && !die.locked).Count();
             }
         }
 
@@ -192,11 +211,11 @@ namespace StressCost.Cost
                     else y += size;
                 }
 
-                    ResetPlayerTwo();
+                ResetPlayerTwo();
             }
         }
 
-        public void AddDies(int amount = 1, AlchemyValue? specific = null)
+        public static void AddDies(int amount = 1, AlchemyValue? specific = null)
         {
             try
             {
@@ -209,13 +228,13 @@ namespace StressCost.Cost
             catch { }
         }
 
-        public void RollDies(int? index = null, AlchemyValue? specific = null)
+        public static void RollDies(int? index = null, AlchemyValue? specific = null)
         {
             if (index != null) RollDice(index.Value, specific);
             else for(int i = 0; i < awakeCount; i++) RollDice(i, specific);
         }
 
-        private void RollDice(int index, AlchemyValue? specific = null)
+        private static void RollDice(int index, AlchemyValue? specific = null)
         {
             if (!dies[index].locked)
             {
@@ -227,7 +246,7 @@ namespace StressCost.Cost
             }
         }
 
-        public bool PayIfPossible(AlchemyValue type, int amount)
+        public static bool PayIfPossible(AlchemyValue type, int amount)
         {
             switch (type)
             {
@@ -248,7 +267,7 @@ namespace StressCost.Cost
             return true;
         }
 
-        private void DepleteDies(AlchemyValue toDrop, int amount)
+        private static void DepleteDies(AlchemyValue toDrop, int amount)
         {
             for (int i = 0; i < 10 && amount > 0 && dies[i].value != AlchemyValue.Empty; i++)
             {  
@@ -264,6 +283,43 @@ namespace StressCost.Cost
                     amount--;
                     i--;
                 }
+            }
+        }
+
+        public static IEnumerator WaitUntilClick(IEnumerator next)
+        {
+            waitingForClick = true;
+            InteractionCursor.Instance.ForceCursorType(CursorType.Target);
+            yield return new WaitUntil(() => dieClicked);
+
+
+            yield return dies[lastClicked].locked = !dies[lastClicked].locked;
+            yield return next;
+
+            yield return dieClicked = false;
+            yield return waitingForClick = false;
+        }
+
+        internal static bool GetLastClickedDiceId(object die)
+        {
+            if (die is not AlchemyDice) throw new UnauthorizedAccessException("Only counter's Alchemy Dies can call this method.");
+            else
+            {
+                for(int i = 0; i < dies.Length; i++)
+                {
+                    if (dies[i] == die)
+                    {
+                        lastClicked = i;
+                        if (waitingForClick)
+                        {
+                            InteractionCursor.Instance.ForceCursorType(CursorType.Default);
+                            dieClicked = true;
+                        }
+                        return true;
+                    }
+                }
+
+                throw new UnauthorizedAccessException("Only counter's Alchemy Dies can call this method.");
             }
         }
 
@@ -297,7 +353,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= Patches.CostGraphicPatches.disAlchemyCounter.fleshCount;
+            return cardCost <= AlchemyCounter.fleshCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -335,7 +391,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= Patches.CostGraphicPatches.disAlchemyCounter.metalCount;
+            return cardCost <= AlchemyCounter.metalCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -373,7 +429,7 @@ namespace StressCost.Cost
 
         public override bool CostSatisfied(int cardCost, PlayableCard card)
         {
-            return cardCost <= Patches.CostGraphicPatches.disAlchemyCounter.elixirCount;
+            return cardCost <= AlchemyCounter.elixirCount;
         }
 
         public override string CostUnsatisfiedHint(int cardCost, PlayableCard card)
@@ -403,6 +459,33 @@ namespace StressCost.Cost
         {
             // if you want the API to handle adding stack numbers, you can instead provide a 7x8 texture like so:
             return Part2CardCostRender.CombineIconAndCount(cardCost, TextureHelper.GetImageAsTexture("pixelcost_elixir.png", typeof(CostmaniaPlugin).Assembly));
+        }
+    }
+
+    public static class CardAlchemyExpansion
+    {
+        public static int FleshCost(this CardInfo card)
+        {
+            int? baseVal = card.GetExtendedPropertyAsInt("FleshCost");
+            if (baseVal == null) baseVal = 0;
+
+            return baseVal.Value;
+        }
+
+        public static int MetalCost(this CardInfo card)
+        {
+            int? baseVal = card.GetExtendedPropertyAsInt("MetalCost");
+            if (baseVal == null) baseVal = 0;
+
+            return baseVal.Value;
+        }
+
+        public static int ElixirCost(this CardInfo card)
+        {
+            int? baseVal = card.GetExtendedPropertyAsInt("ElixirCost");
+            if (baseVal == null) baseVal = 0;
+
+            return baseVal.Value;
         }
     }
 }

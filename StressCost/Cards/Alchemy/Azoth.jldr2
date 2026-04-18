@@ -1,0 +1,17 @@
+{
+  "name": "Azoth",
+  "modPrefix": "Alchemy",
+  "displayedName": "Azoth",
+  "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
+  "temple": "Nature",
+  "baseAttack": 0,
+  "baseHealth": 3,
+  "pixelTexture":"pixel_azoth.png",
+  "abilities": [ "StressSigils.Transmutation"],
+  "extensionProperties": {
+  "FleshCost": "2",
+  "MetalCost": "1",
+  "ElixirCost": "2"
+  },
+  "appearanceBehaviour": ["RareCardBackground"]
+}

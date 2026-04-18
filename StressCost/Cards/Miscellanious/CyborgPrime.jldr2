@@ -1,0 +1,15 @@
+{
+  "name": "CyborgPrime",
+  "modPrefix": "Alchemy",
+  "displayedName": "Cyborg Prime",
+  "metaCategories": [ "GBCPlayable" ],
+  "temple": "Nature",
+  "baseAttack": 2,
+  "baseHealth": 3,
+  "evolveIntoName":"Alchemy_MegaCyborg",
+  "pixelTexture":"pixel_cyborgprime.png",
+  "extensionProperties": {
+  "FleshCost": "2",
+  "MetalCost": "2"
+  }
+}

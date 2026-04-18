@@ -1,14 +1,15 @@
 {
-  "name": "RoaringKnight",
+  "name": "Spartacus",
   "modPrefix": "Valor",
-  "displayedName": "Roaring Knight",
+  "displayedName": "Spartacus",
   "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
   "temple": "Wizard",
   "baseAttack": 3,
-  "baseHealth": 2,
-  "pixelTexture":"pixel_roaringknight.png",
+  "baseHealth": 5,
+  "pixelTexture":"pixel_spartacus.png",
+  "abilities": ["StressSigils.Glory Kill", "StressSigils.Impart" ],
   "extensionProperties": {
-  "ValorCost": "3"
+  "ValorCost": "4"
   },
   "appearanceBehaviour": ["RareCardBackground"]
 }

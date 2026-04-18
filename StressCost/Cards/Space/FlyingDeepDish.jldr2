@@ -1,0 +1,15 @@
+{
+  "name": "FlyingDeepDish",
+  "modPrefix": "Space",
+  "displayedName": "Flying Deep Dish",
+  "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
+  "temple": "Tech",
+  "baseAttack": 2,
+  "baseHealth": 3,
+  "pixelTexture":"pixel_flyingdeepdish.png",
+  "abilities": [ "StrafeSwap", "StressSigils.Driveby" ],
+  "extensionProperties": {
+  "StardustCost": "5"
+  },
+  "appearanceBehaviour": ["RareCardBackground"]
+}

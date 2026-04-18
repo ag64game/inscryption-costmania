@@ -5,8 +5,9 @@
   "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
   "temple": "Wizard",
   "baseAttack": 1,
-  "baseHealth": 2,
+  "baseHealth": 3,
   "pixelTexture":"pixel_circe.png",
+  "abilities": ["StressSigils.Pigify" ],
   "extensionProperties": {
   "ValorCost": "2",
   "ValorRank": "2"

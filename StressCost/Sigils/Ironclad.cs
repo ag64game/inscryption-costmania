@@ -23,6 +23,7 @@ namespace StressCost.Sigils
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_ironclad.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_ironclad.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPowerlevel(2);
             AbilIronclad.ability = info.ability;
         }
     }

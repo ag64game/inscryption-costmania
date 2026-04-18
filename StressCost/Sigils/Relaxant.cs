@@ -41,6 +41,7 @@ namespace StressCost.Sigils
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_relaxant.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_relaxant.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPowerlevel(1);
             AbilRelaxant.ability = info.ability;
         }
     }

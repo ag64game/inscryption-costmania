@@ -1,0 +1,15 @@
+{
+  "name": "BlackholeBehemoth",
+  "modPrefix": "Space",
+  "displayedName": "Blackhole Behemoth",
+  "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
+  "temple": "Tech",
+  "baseAttack": 2,
+  "baseHealth": 5,
+  "abilities": ["StressSigils.End Of The Tunnel"],
+  "pixelTexture":"pixel_blackholebehemoth.png",
+  "extensionProperties": {
+  "StardustCost": "10"
+  },
+  "appearanceBehaviour": ["RareCardBackground"]
+}

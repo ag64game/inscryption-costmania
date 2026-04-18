@@ -2,6 +2,7 @@
   "name": "MysteriousVat2",
   "modPrefix": "Alchemy",
   "displayedName": "Mysterious Vat",
+  "metaCategories": [ "GBCPlayable", "Rare" ],
   "temple": "Nature",
   "baseAttack": 0,
   "baseHealth": 4,

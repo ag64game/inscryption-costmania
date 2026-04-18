@@ -1,0 +1,14 @@
+{
+  "name": "Megalo",
+  "modPrefix": "Stress",
+  "displayedName": "Megalo",
+  "temple": "Undead",
+  "baseAttack": 3,
+  "baseHealth": 6,
+  "traits":["Terrain"],
+  "abilities": ["Reach", "StrafeSwap"],
+  "pixelTexture":"pixel_megalo.png",
+  "extensionProperties": {
+  "StressCost": "8"
+  }
+}

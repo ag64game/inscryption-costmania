@@ -8,7 +8,7 @@ using System.Text;
 
 namespace StressCost.Sigils
 {
-    public class AbilEnrage : StressActivatedAbility
+    public class AbilEnrage : CostmaniaActivatedAbility
     {
         public static Ability ability;
         public override Ability Ability => ability;
@@ -45,6 +45,7 @@ namespace StressCost.Sigils
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_enrage.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);
+            info.SetPowerlevel(3);
             AbilEnrage.ability = info.ability;
         }
     }

@@ -75,6 +75,7 @@ namespace StressCost.Sigils
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_rentrance.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);
+            info.SetPowerlevel(4);
             AbilRentrance.ability = info.ability;
         }
     }

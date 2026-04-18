@@ -52,7 +52,7 @@ namespace StressCost.Patches
 
         public static void Update()
         {
-            Cost.ValorCost.SetMaxRank();
+            if(CostmaniaPlugin.config3DValor.Value || SaveManager.SaveFile.IsPart2) Cost.ValorCost.SetMaxRank();
         }
 
         [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.ResolveCardOnBoard))]
@@ -71,9 +71,9 @@ namespace StressCost.Patches
 
                     if (CostmaniaPlugin.config3DAlchemy.Value || SaveManager.SaveFile.IsPart2)
                     {
-                        if (card.Info.GetExtendedPropertyAsInt("FleshCost") > 0) Patches.CostGraphicPatches.disAlchemyCounter.PayIfPossible(AlchemyValue.Flesh, card.Info.GetExtendedPropertyAsInt("FleshCost").Value);
-                        if (card.Info.GetExtendedPropertyAsInt("MetalCost") > 0) Patches.CostGraphicPatches.disAlchemyCounter.PayIfPossible(AlchemyValue.Metal, card.Info.GetExtendedPropertyAsInt("MetalCost").Value);
-                        if (card.Info.GetExtendedPropertyAsInt("ElixirCost") > 0) Patches.CostGraphicPatches.disAlchemyCounter.PayIfPossible(AlchemyValue.Elixir, card.Info.GetExtendedPropertyAsInt("ElixirCost").Value);
+                        if (card.Info.GetExtendedPropertyAsInt("FleshCost") > 0) AlchemyCounter.PayIfPossible(AlchemyValue.Flesh, card.Info.GetExtendedPropertyAsInt("FleshCost").Value);
+                        if (card.Info.GetExtendedPropertyAsInt("MetalCost") > 0) AlchemyCounter.PayIfPossible(AlchemyValue.Metal, card.Info.GetExtendedPropertyAsInt("MetalCost").Value);
+                        if (card.Info.GetExtendedPropertyAsInt("ElixirCost") > 0) AlchemyCounter.PayIfPossible(AlchemyValue.Elixir, card.Info.GetExtendedPropertyAsInt("ElixirCost").Value);
                     }
                 }
 
@@ -164,7 +164,7 @@ namespace StressCost.Patches
         {
             if (playerUpkeep && SaveManager.SaveFile.IsPart2)
             {
-                Patches.CostGraphicPatches.disAlchemyCounter.AddDies();
+                AlchemyCounter.AddDies();
 
 
                 if (__instance.TurnNumber < 2)
@@ -182,10 +182,10 @@ namespace StressCost.Patches
                             available.Add(AlchemyValue.Elixir);
                     }
 
-                    if (available.Count > 0) Patches.CostGraphicPatches.disAlchemyCounter.RollDies(specific: available[UnityEngine.Random.Range(0, available.Count)]);
-                    else Patches.CostGraphicPatches.disAlchemyCounter.RollDies();
+                    if (available.Count > 0) AlchemyCounter.RollDies(specific: available[UnityEngine.Random.Range(0, available.Count)]);
+                    else AlchemyCounter.RollDies();
                 }
-                else Patches.CostGraphicPatches.disAlchemyCounter.RollDies();
+                else AlchemyCounter.RollDies();
             }
             yield return enumerator;
         }
@@ -193,7 +193,8 @@ namespace StressCost.Patches
         [HarmonyPostfix, HarmonyPatch(typeof(TurnManager), nameof(TurnManager.DoUpkeepPhase))]
         public static IEnumerator ResetStardust(IEnumerator enumerator, TurnManager __instance, bool playerUpkeep)
         {
-            StardustCost.stardustCounter = 0;
+            if(Singleton<BoardManager>.Instance.GetPlayerCards().Any(card => card.HasAbility(AbilDataBanks.ability))) StardustCost.stardustCounter -= 2;
+            else StardustCost.stardustCounter = 0;
             yield return enumerator;
         }
 
@@ -241,9 +242,12 @@ namespace StressCost.Patches
         [HarmonyPrefix]
         public static void ResetPlayerTwo(TurnManager __instance)
         {
-            Patches.CostGraphicPatches.disAlchemyCounter.ResetPlayerTwo();
-            Cost.StressCost.ResetPlayerTwo();
             VariablestatDeathToll.ResetKillCounts();
+            if (SaveManager.SaveFile.IsPart2)
+            {
+                Patches.CostGraphicPatches.disAlchemyCounter.ResetPlayerTwo();
+                Cost.StressCost.ResetPlayerTwo();
+            }
         }
     }
 }

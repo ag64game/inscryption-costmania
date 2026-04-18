@@ -5,7 +5,7 @@
   "metaCategories": [ "GBCPlayable", "GBCPack" ],
   "temple": "Wizard",
   "baseAttack": 2,
-  "baseHealth": 2,
+  "baseHealth": 1,
   "pixelTexture":"pixel_blunderbuss.png",
   "abilities": [ "StressSigils.First Strike" ],
   "extensionProperties": {

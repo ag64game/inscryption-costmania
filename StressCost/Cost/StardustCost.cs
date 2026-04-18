@@ -92,5 +92,14 @@ namespace StressCost.Cost
         }
     }
 
+    public static class CardSpaceExpansion
+    {
+        public static int StardustCost(this CardInfo card)
+        {
+            int? baseVal = card.GetExtendedPropertyAsInt("StardustCost");
+            if (baseVal == null) baseVal = 0;
 
+            return baseVal.Value;
+        }
+    }
 }

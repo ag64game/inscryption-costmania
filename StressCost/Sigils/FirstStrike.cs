@@ -48,6 +48,7 @@ namespace StressCost.Sigils
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_firststrike.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_firststrike.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPowerlevel(4);
             AbilFirstStrike.ability = info.ability;
         }
     }

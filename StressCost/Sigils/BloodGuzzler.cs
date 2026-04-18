@@ -43,6 +43,7 @@ namespace StressCost.Sigils
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_bloodguzzler.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_bloodguzzler.png", typeof(CostmaniaPlugin).Assembly));
+            info.SetPowerlevel(4);
             AbilBloodGuzzler.ability = info.ability;
         }
     }

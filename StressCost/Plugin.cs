@@ -67,7 +67,7 @@ namespace StressCost
         private void Awake()
         {
             Log = base.Logger;
-            Directory = base.Info.Location.Replace("Costmania.dll", "");
+            Directory = base.Info.Location.Replace("CostmaniaActivatedAbility.dll", "");
             harmony.PatchAll();
 
             AddCosts();
@@ -152,6 +152,14 @@ namespace StressCost
             AbilRandomAbility.AddRandomAbility();
             AbilAfterimage.AddAfterimage();
             AbilRentrance.AddRentrance();
+            AbilEndOfTheTunnel.AddEndOfTheTunnel();
+            AbilDriveby.AddDriveby();
+            AbilDataBanks.AddDataBanks();
+            AbilPigify.AddPigify();
+            AbilTransmutation.AddTransmutation();
+            AbilGloryKill.AddGloryKill();
+            AbilImpart.AddImpart();
+            AbilProductionLine.AddProductionLine();
 
             VariablestatMightierPen.AddMightierPen();
             VariablestatDeathToll.AddDeathToll();

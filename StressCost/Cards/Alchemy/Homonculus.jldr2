@@ -7,6 +7,7 @@
   "baseAttack": 1,
   "baseHealth": 1,
   "pixelTexture":"pixel_homonculus.png",
+  "evolveIntoName":"Alchemy_GreaterHomonculus",
   "extensionProperties": {
   "FleshCost": "1"
   }

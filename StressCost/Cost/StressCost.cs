@@ -58,5 +58,14 @@ namespace StressCost.Cost
         }
     }
 
+    public static class CardStressExpansion
+    {
+        public static int StressCost(this CardInfo card)
+        {
+            int? baseVal = card.GetExtendedPropertyAsInt("StressCost");
+            if (baseVal == null) baseVal = 0;
 
+            return baseVal.Value;
+        }
+    }
 }

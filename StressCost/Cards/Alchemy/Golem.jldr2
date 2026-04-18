@@ -6,6 +6,7 @@
   "temple": "Nature",
   "baseAttack": 1,
   "baseHealth": 2,
+  "evolveIntoName":"Alchemy_Arquebus",
   "pixelTexture":"pixel_golem.png",
   "abilities": [ "StressSigils.Ironclad" ],
   "extensionProperties": {

@@ -18,6 +18,7 @@ using InscryptionAPI.Sound;
 using InscryptionAPI.Triggers;
 using InscryptionCommunityPatch.Card;
 using InscryptionCommunityPatch.PixelTutor;
+using Newtonsoft.Json.Bson;
 using Pixelplacement;
 using Pixelplacement.TweenSystem;
 using Sirenix.Serialization.Utilities;
@@ -49,13 +50,21 @@ namespace StressCost.Patches
         [HarmonyPostfix]
         public static IEnumerator ActivatedAddCosts(IEnumerator enumerator, ActivatedAbilityBehaviour __instance)
         {
-            if (__instance is StressActivatedAbility)
-            {
-                Cost.StressCost.stressCounter += (__instance as StressActivatedAbility).StressCost;
-                if ((__instance as StressActivatedAbility).StressCost > 0 && enumerator != null) foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlots.FindAll(slot => slot.Card != null)) OnStressCounterChange(slot.Card, enumerator);
-            }
-
             yield return enumerator;
+            if (__instance is CostmaniaActivatedAbility)
+            {
+                CostmaniaActivatedAbility abil = (CostmaniaActivatedAbility) __instance;                
+                if (abil.CanActivate())
+                {
+                    Cost.StressCost.stressCounter += abil.StressCost;
+                    if (abil.StressCost > 0 && enumerator != null) foreach (CardSlot slot in Singleton<BoardManager>.Instance.AllSlots.FindAll(slot => slot.Card != null)) OnStressCounterChange(slot.Card, enumerator);
+                    __instance.Card.AddValorRank(-(abil.ValorRankCost));
+
+                    AlchemyCounter.PayIfPossible(AlchemyValue.Flesh, abil.FleshCost);
+                    AlchemyCounter.PayIfPossible(AlchemyValue.Metal, abil.MetalCost);
+                    AlchemyCounter.PayIfPossible(AlchemyValue.Elixir, abil.ElixirCost);
+                }
+            }
         }
 
         [HarmonyPatch(typeof(PlayableCard), nameof(PlayableCard.TakeDamage))]
@@ -144,6 +153,50 @@ namespace StressCost.Patches
                 AbilWatchman.spiedCountPlayer = 0;
             }
 
+            yield return enumerator;
+        }
+
+        [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.AssignCardToSlot))]
+        [HarmonyPostfix]
+        public static IEnumerator BlackholeWhenMoving(IEnumerator enumerator, BoardManager __instance, PlayableCard card, CardSlot slot)
+        {
+            yield return enumerator;
+            yield return EndOfTunnelSuckOne(card, slot);
+        }
+
+        [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]
+        [HarmonyPrefix]
+        public static void ResetBlackholeText()
+        {
+            AbilEndOfTheTunnel.dramaqueenTextPlayed = false;
+        }
+
+        private static IEnumerator EndOfTunnelSuckOne(PlayableCard victim, CardSlot victimSlot)
+        {
+            PlayableCard killer = victimSlot.opposingSlot.Card;
+
+            if (killer != null && killer.HasAbility(AbilEndOfTheTunnel.ability))
+            {
+                if (!AbilEndOfTheTunnel.dramaqueenTextPlayed)
+                {
+                    AbilEndOfTheTunnel.dramaqueenTextPlayed = true;
+                    yield return Singleton<TextBox>.Instance.ShowUntilInput($"At the end of the tunnel.", (GBC.TextBox.Style)killer.Info.temple);
+                    yield return Singleton<TextBox>.Instance.ShowUntilInput($"THERE I STOOD", (GBC.TextBox.Style)killer.Info.temple, shake: true);
+                }
+                yield return victim.TakeDamage(999, killer);
+            }
+        }
+
+        [HarmonyPatch(typeof(BoardManager), nameof(BoardManager.AssignCardToSlot))]
+        [HarmonyPostfix]
+        public static IEnumerator DrivebyDamage(IEnumerator enumerator, BoardManager __instance, PlayableCard card, CardSlot slot)
+        {
+            if (card.HasAbility(AbilDriveby.ability) && slot.opposingSlot.Card != null)
+            {
+                yield return Singleton<TextBox>.Instance.ShowUntilInput($"{card.Info.displayedName} got a parting shot.", (GBC.TextBox.Style)card.Info.temple);
+                card.Anim.PlayAttackAnimation(false, card.OpposingSlot());
+                yield return card.OpposingSlot().Card.TakeDamage(1, card);
+            }
             yield return enumerator;
         }
     }
