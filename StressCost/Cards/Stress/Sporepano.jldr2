@@ -1,0 +1,15 @@
+{
+  "name": "Trypano_Fused",
+  "modPrefix": "Stress",
+  "displayedName": "Sporepano",
+  "metaCategories": [ "GBCPlayable" ],
+  "temple": "Undead",
+  "baseAttack": 1,
+  "baseHealth": 4,
+  "abilities": ["Sharp", "Sharp"],
+  "pixelTexture":"pixel_sporepano.png",
+  "extensionProperties": {
+  "StressCost": "4"
+  },
+  "appearanceBehaviour": ["aga.costmania.PixelSporeBg"]
+}

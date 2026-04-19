@@ -2,7 +2,6 @@
   "name": "CyborgPrime",
   "modPrefix": "Alchemy",
   "displayedName": "Cyborg Prime",
-  "metaCategories": [ "GBCPlayable" ],
   "temple": "Nature",
   "baseAttack": 2,
   "baseHealth": 3,

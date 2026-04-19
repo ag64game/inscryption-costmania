@@ -11,6 +11,6 @@
   "abilities": [ "Strafe" ],
   "pixelTexture":"pixel_astralwatcher.png",
   "extensionProperties": {
-  "StardustCost": "5"
+  "StardustCost": "6"
   }
 }

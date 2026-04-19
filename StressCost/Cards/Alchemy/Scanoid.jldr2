@@ -7,7 +7,7 @@
   "baseAttack": 1,
   "baseHealth": 1,
   "pixelTexture":"pixel_scanoid.png",
-  "abilities": [ "Loot" ],
+  "abilities": [ "Loot", "Loot" ],
   "extensionProperties": {
   "FleshCost": "1",
   "MetalCost": "2"

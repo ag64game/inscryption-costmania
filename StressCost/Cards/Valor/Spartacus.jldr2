@@ -5,7 +5,7 @@
   "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
   "temple": "Wizard",
   "baseAttack": 3,
-  "baseHealth": 5,
+  "baseHealth": 2,
   "pixelTexture":"pixel_spartacus.png",
   "abilities": ["StressSigils.Glory Kill", "StressSigils.Impart" ],
   "extensionProperties": {

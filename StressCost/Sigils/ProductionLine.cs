@@ -39,8 +39,12 @@ namespace StressCost.Sigils
         {
             CardSlot old = Card.Slot;
             yield return base.PreSuccessfulTriggerSequence();
+
+
             CardSlot right = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false);
-            if (right.Card != null) yield return DoMovement(right, false); else yield return DoMovement(Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true), true);
+            CardSlot left = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true);
+            if (right.Card == null) yield return DoMovement(right, false);
+            else if (left.Card == null) yield return DoMovement(left, true);
 
             yield return Singleton<TextBox>.Instance.ShowUntilInput($"{Card.Info.displayedName}'s pipeline triggers", (GBC.TextBox.Style)Card.Info.temple);
             yield return old.CreateCardInSlot(CardLoader.GetCardByName(cards[UnityEngine.Random.Range(0, cards.Length)]));

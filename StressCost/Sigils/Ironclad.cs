@@ -24,6 +24,7 @@ namespace StressCost.Sigils
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_ironclad.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);
+            info.SetCanStack(true);
             AbilIronclad.ability = info.ability;
         }
     }

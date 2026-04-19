@@ -2,7 +2,6 @@
   "name": "GreaterHomonculus",
   "modPrefix": "Alchemy",
   "displayedName": "Greater Homonculus",
-  "metaCategories": [ "GBCPlayable" ],
   "temple": "Nature",
   "baseAttack": 2,
   "baseHealth": 2,

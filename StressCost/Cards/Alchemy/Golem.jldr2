@@ -11,6 +11,7 @@
   "abilities": [ "StressSigils.Ironclad" ],
   "extensionProperties": {
   "MetalCost": "2",
-  "ElixirCost": "1"
+  "ElixirCost": "1",
+  "GBCMycologistFusedVersion": "Alchemy_Golem_Fused"
   }
 }

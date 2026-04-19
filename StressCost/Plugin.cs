@@ -24,6 +24,7 @@ using Pixelplacement.TweenSystem;
 using Sirenix.Serialization.Utilities;
 using Steamworks;
 using StressCost.Cost;
+using StressCost.Patches;
 using StressCost.Sigils;
 using StressCost.Sigils.VariableStats;
 using System;
@@ -80,9 +81,12 @@ namespace StressCost
             harmony.PatchAll(typeof(Patches.CostPatches));
             harmony.PatchAll(typeof(Patches.PackPatches));
             harmony.PatchAll(typeof(Patches.DialoguePatches));
+            harmony.PatchAll(typeof(Patches.SporePatches));
 
             Patches.PackPatches.SetupStarterDecks();
-            
+            Patches.AbilityPatches.SetStackableAbilities();
+
+
             config3DAlchemy = base.Config.Bind<bool>("Alchemy in 3D", "Active", false, "Whether Alchemy dies should be rolled in the 3D acts, won't display them though");
             config3DStress = base.Config.Bind<bool>("Stress in 3D", "Active", false, "Whether the Stress Counter should be active in the 3D acts, won't display it though");
             config3DStardust = base.Config.Bind<bool>("Stardust in 3D", "Active", false, "Whether the Stardust Counter should be active in the 3D acts, won't display it though");
@@ -127,6 +131,8 @@ namespace StressCost
             stardustCost.SetCostTier(Cost.CostTier.CostTierF);
             stardustCost.ResourceType = (ResourceType)42;
             stardustCost.SetCanBePlayedByTurn2WithHand(Cost.FairHandStardust.CanBePlayed);
+
+            var sporeBg = CardAppearanceBehaviourManager.Add(GUID, "PixelSporeBg", typeof(SporeBackground)).Id;
         }
 
         public static void AddSigils()
@@ -149,7 +155,6 @@ namespace StressCost
             AbilWarper.AddWarper();
             AbilShatteringStardust.AddShatteringStardust();
             AbilArmyBuilder.AddArmyBuilder();
-            AbilRandomAbility.AddRandomAbility();
             AbilAfterimage.AddAfterimage();
             AbilRentrance.AddRentrance();
             AbilEndOfTheTunnel.AddEndOfTheTunnel();

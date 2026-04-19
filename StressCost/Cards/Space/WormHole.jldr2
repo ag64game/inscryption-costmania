@@ -9,6 +9,7 @@
   "pixelTexture":"pixel_wormhole.png",
   "abilities": [ "StressSigils.Warper" ],
   "extensionProperties": {
-  "StardustCost": "3"
+  "StardustCost": "3",
+  "GBCMycologistFusedVersion": "Space_WormHole_Fused"
   }
 }

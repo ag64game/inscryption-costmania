@@ -2,7 +2,7 @@
   "name": "VatMonster",
   "modPrefix": "Alchemy",
   "displayedName": "Vat Monster",
-  "metaCategories": [ "GBCPlayable", "Rare" ],
+  "metaCategories": [ "Rare" ],
   "temple": "Nature",
   "baseAttack": 2,
   "baseHealth": 2,

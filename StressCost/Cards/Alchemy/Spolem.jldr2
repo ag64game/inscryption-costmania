@@ -1,0 +1,16 @@
+{
+  "name": "Golem_Fused",
+  "modPrefix": "Alchemy",
+  "displayedName": "Spolem",
+  "metaCategories": [ "GBCPlayable" ],
+  "temple": "Nature",
+  "baseAttack": 1,
+  "baseHealth": 2,
+  "pixelTexture":"pixel_spolem.png",
+  "abilities": [ "StressSigils.Ironclad", "StressSigils.Ironclad" ],
+  "extensionProperties": {
+  "MetalCost": "2",
+  "ElixirCost": "1"
+  },
+  "appearanceBehaviour": ["aga.costmania.PixelSporeBg"]
+}

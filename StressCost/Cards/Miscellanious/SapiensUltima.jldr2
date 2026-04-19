@@ -2,7 +2,7 @@
   "name": "SapiensUltima",
   "modPrefix": "Alchemy",
   "displayedName": "Sapiens Ultima",
-  "metaCategories": [ "GBCPlayable", "Rare" ],
+  "metaCategories": [ "Rare" ],
   "temple": "Nature",
   "baseAttack": 4,
   "baseHealth": 4,

@@ -26,7 +26,7 @@ namespace StressCost.Sigils
 
         public override IEnumerator OnUpkeep(bool playerUpkeep)
         {
-            doDodge = true;
+            yield return doDodge = true;
             yield return base.OnUpkeep(playerUpkeep);
         }
 
@@ -42,7 +42,8 @@ namespace StressCost.Sigils
             yield return new WaitForSeconds(0.175f);
 
             CardSlot right = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false);
-            if (right.Card != null) yield return DoMovement(right, false); else yield return DoMovement(Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true), true);
+            CardSlot left = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true);
+            if (right.Card == null) yield return DoMovement(right, false); else if (left.Card == null) yield return DoMovement(left, true);
 
 
            yield return base.LearnAbility(0.1f);

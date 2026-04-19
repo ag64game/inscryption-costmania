@@ -22,11 +22,11 @@ namespace StressCost.Sigils
 
             yield return new WaitForSeconds(0.2f);
             ViewManager.Instance.SwitchToView(View.Default);
-            yield return new WaitForSeconds(0.2f);
+
+            Card.Anim.StrongNegationEffect();
             if (Cost.StressCost.stressCounter > 0) Cost.StressCost.stressCounter -= 1;
 
             Console.WriteLine(Cost.StressCost.stressCounter);
-            yield return new WaitForSeconds(0.3f);
             yield return LearnAbility(0.2f);
         }
 

@@ -9,6 +9,7 @@
   "abilities": [ "Tutor" ],
   "pixelTexture":"pixel_oracle.png",
   "extensionProperties": {
-  "ValorCost": "1"
+  "ValorCost": "1",
+  "GBCMycologistFusedVersion": "Valor_Oracle_Fused"
   }
 }

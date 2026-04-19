@@ -46,6 +46,13 @@ namespace StressCost.Patches
 {
     internal class AbilityPatches
     {
+        public static void SetStackableAbilities()
+        {
+            AbilityManager.BaseGameAbilities.AbilityByID(Ability.RandomAbility).SetCanStack(true);
+            AbilityManager.BaseGameAbilities.AbilityByID(Ability.Tutor).SetCanStack(true);
+            AbilityManager.BaseGameAbilities.AbilityByID(Ability.Sharp).SetCanStack(true);
+        }
+
         [HarmonyPatch(typeof(ActivatedAbilityBehaviour), nameof(ActivatedAbilityBehaviour.OnActivatedAbility))]
         [HarmonyPostfix]
         public static IEnumerator ActivatedAddCosts(IEnumerator enumerator, ActivatedAbilityBehaviour __instance)
@@ -74,10 +81,13 @@ namespace StressCost.Patches
             __state = damage;
             if (__instance)
             {
-                if (__instance.HasAbility((Ability)5121) && damage > 0)
+                if (__instance.HasAbility(AbilIronclad.ability) && damage > 0)
                 {
-                    __state--;
-                    damage--;
+                    for (int i = 0; i < __instance.GetAbilityStacks(AbilIronclad.ability); i++)
+                    {
+                        __state--;
+                        damage--;
+                    }
                     __instance.Anim.StrongNegationEffect();
                 }
             }
@@ -191,13 +201,26 @@ namespace StressCost.Patches
         [HarmonyPostfix]
         public static IEnumerator DrivebyDamage(IEnumerator enumerator, BoardManager __instance, PlayableCard card, CardSlot slot)
         {
-            if (card.HasAbility(AbilDriveby.ability) && slot.opposingSlot.Card != null)
+            try
             {
-                yield return Singleton<TextBox>.Instance.ShowUntilInput($"{card.Info.displayedName} got a parting shot.", (GBC.TextBox.Style)card.Info.temple);
-                card.Anim.PlayAttackAnimation(false, card.OpposingSlot());
-                yield return card.OpposingSlot().Card.TakeDamage(1, card);
+                if (card.HasAbility(AbilDriveby.ability) && slot.opposingSlot.Card != null && card.TurnPlayed != Singleton<TurnManager>.Instance.TurnNumber)
+                {
+                    yield return Singleton<TextBox>.Instance.ShowUntilInput($"{card.Info.displayedName} got a parting shot.", (GBC.TextBox.Style)card.Info.temple);
+                    card.Anim.PlayAttackAnimation(false, slot.opposingSlot);
+                    yield return slot.opposingSlot.Card.TakeDamage(1, card);
+                }
             }
+            finally { }
             yield return enumerator;
+        }
+
+        [HarmonyPatch(typeof(RandomAbility), nameof(RandomAbility.ChooseAbility))]
+        [HarmonyPostfix]
+        public static void AmorphousMoreAbilities(ref RandomAbility __instance, ref Ability __result)
+        {
+            Ability newChoice = AbilityManager.AllAbilityInfos[UnityEngine.Random.Range(0, AbilityManager.AllAbilityInfos.Count)].ability;
+
+            __result = newChoice;
         }
     }
 }

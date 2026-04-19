@@ -89,7 +89,7 @@ namespace StressCost.Patches
                 AddTab(__instance, "Alchemy", new Vector3(-0.718f, 0.175f, 0));
                 AddTab(__instance, "Stress", new Vector3(-0.242f, 0.175f, 0));
                 AddTab(__instance, "Space", new Vector3(0.234f, 0.175f, 0));
-                AddTab(__instance, "Valor", new Vector3(0.71f, 0.175f, 0));
+                AddTab(__instance, "Valor", new Vector3(0.72f, 0.175f, 0));
             }
             public static void AddTab(CollectionUI instance, string name, Vector3 position)
             {
@@ -215,6 +215,21 @@ namespace StressCost.Patches
                 }
             }
             else __result.Add(new List<CardInfo>());
+        }
+
+        [HarmonyPatch(typeof(CardInfo), nameof(CardInfo.GetGBCDescriptionLocalized))]
+        [HarmonyPostfix]
+        public static void NoPromotingTerrainDesc(List<Ability> allAbilities, CardInfo __instance, ref string __result)
+        {
+            string altered = "";
+            if (__instance != null && __instance.GetExtendedProperty("CardAlwaysPromotable") == null)
+            {
+                if (__instance.GetExtendedProperty("CardAlwaysSacrificeable") != null && BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("nevernamed.inscryption.sigils"))
+                    altered = __result.Replace(Localization.Translate("CAN'T BE SACRIFICED."), Localization.Translate("CAN'T BE PROMOTED."));
+                else altered = __result.Replace(Localization.Translate("CAN'T BE SACRIFICED."), Localization.Translate("CAN'T BE SACRIFICED OR PROMOTED."));
+
+                __result = altered;
+            }
         }
     }
 }

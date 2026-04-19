@@ -1,0 +1,15 @@
+{
+  "name": "WormHole_Fused",
+  "modPrefix": "Space",
+  "displayedName": "Spore Hole",
+  "metaCategories": [ "GBCPlayable" ],
+  "temple": "Tech",
+  "baseAttack": 1,
+  "baseHealth": 2,
+  "pixelTexture":"pixel_sporehole.png",
+  "abilities": [ "StressSigils.Warper", "StressSigils.Warper" ],
+  "extensionProperties": {
+  "StardustCost": "3"
+  },
+  "appearanceBehaviour": ["aga.costmania.PixelSporeBg"]
+}

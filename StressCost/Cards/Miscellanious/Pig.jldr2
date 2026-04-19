@@ -2,7 +2,6 @@
   "name": "Pig",
   "modPrefix": "Valor",
   "displayedName": "Pig",
-  "metaCategories": [ "GBCPlayable" ],
   "temple": "Nature",
   "baseAttack": 0,
   "baseHealth": 2,

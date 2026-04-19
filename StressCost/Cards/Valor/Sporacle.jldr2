@@ -1,0 +1,15 @@
+{
+  "name": "Oracle_Fused",
+  "modPrefix": "Valor",
+  "displayedName": "Sporacle",
+  "metaCategories": [ "GBCPlayable"],
+  "temple": "Wizard",
+  "baseAttack": 0,
+  "baseHealth": 1,
+  "abilities": [ "Tutor", "Tutor" ],
+  "pixelTexture":"pixel_sporacle.png",
+  "extensionProperties": {
+  "ValorCost": "1"
+  },
+  "appearanceBehaviour": ["aga.costmania.PixelSporeBg"]
+}
