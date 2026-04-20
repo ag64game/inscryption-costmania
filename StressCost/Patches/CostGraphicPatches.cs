@@ -115,6 +115,9 @@ namespace StressCost.Patches
 
                     if (baseVal > 0) stat.SetText(Convert.ToString(baseVal));
                     else stat.SetText("");
+
+                    stat.SetSortingOrder((__instance.gameObject.FindChild("Base").FindChild("PixelSnap").GetComponent<SpriteRenderer>().sortingOrder) * 10);
+                    //rankText.GetComponent<SpriteRenderer>().sortingOrder = attack.GetComponent<SpriteRenderer>().sortingOrder;
                 }
             }
         }

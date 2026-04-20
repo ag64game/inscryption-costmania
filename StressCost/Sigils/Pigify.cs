@@ -44,10 +44,13 @@ namespace StressCost.Sigils
             yield return Singleton<TextBox>.Instance.ShowUntilInput($"{selected.Card.Info.displayedName} underwent Pigification!", (GBC.TextBox.Style)Card.Info.temple);
             base.Card.Anim.PlayAttackAnimation(false, selected);
             
-            yield return selected.Card.Die(false);
-            yield return new WaitForSeconds(0.175f);
-            yield return selected.CreateCardInSlot(CardLoader.GetCardByName("Valor_Pig"));
-            yield return new WaitForSeconds(0.375f);
+            if(selected != null)
+            {
+                yield return selected.Card.Die(false);
+                yield return new WaitForSeconds(0.175f);
+                yield return selected.CreateCardInSlot(CardLoader.GetCardByName("Valor_Pig"));
+                yield return new WaitForSeconds(0.375f);
+            }
 
             yield return base.LearnAbility(0f);
 
@@ -56,7 +59,7 @@ namespace StressCost.Sigils
 
         private void ChosenTarget(CardSlot slot)
         {
-            selected = slot;
+            if (!slot.Equals(Card.slot)) selected = slot;
         }
 
         private void ChooseFail(CardSlot slot)

@@ -339,7 +339,7 @@ namespace StressCost.Patches
         private static List<CustomLine> SpaceTutorialLines3()
         {
             List<CustomLine> ret = new List<CustomLine>();
-            ret.Add(GenFromString("Congratulations! You played a card"!, emote: Emotion.Neutral));
+            ret.Add(GenFromString("Congratulations! You played a card!", emote: Emotion.Neutral));
             ret.Add(GenFromString("I'm so proud of you.", emote: Emotion.Neutral));
             ret.Add(GenFromString("Just leave me to my work already.", emote: Emotion.Anger));
 

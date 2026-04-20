@@ -58,7 +58,7 @@ namespace StressCost
 
         Harmony harmony = new Harmony(GUID);
 
-        public static readonly string[] NEW_TEMPLES = ["Alchemy", "Stress", "Space", "Valor"];
+        public static readonly string[] NEW_TEMPLES = {"Alchemy", "Stress", "Space", "Valor"};
 
         internal static ConfigEntry<bool> config3DAlchemy;
         internal static ConfigEntry<bool> config3DStress;
