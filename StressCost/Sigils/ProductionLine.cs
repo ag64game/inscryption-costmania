@@ -32,17 +32,17 @@ namespace StressCost.Sigils
         public override bool RespondsToTurnEnd(bool playerTurnEnd)
         {
             return playerTurnEnd && 
-                (Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true).Card != null || Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false).Card != null);
+                (Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true).Card == null || Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false).Card == null);
         }
 
         public override IEnumerator OnTurnEnd(bool playerTurnEnd)
         {
             CardSlot old = Card.Slot;
             yield return base.PreSuccessfulTriggerSequence();
-
-
-            CardSlot right = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false);
+            
             CardSlot left = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true);
+            CardSlot right = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false);
+
             if (right.Card == null) yield return DoMovement(right, false);
             else if (left.Card == null) yield return DoMovement(left, true);
 

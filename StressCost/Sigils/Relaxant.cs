@@ -36,7 +36,7 @@ namespace StressCost.Sigils
 
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Relaxant",
-                "[creature] lowers the Stress Counter by 1 upon resolving on the board",
+                "[creature] lowers the Stress Counter by 1 upon resolving on the board.",
                 typeof(AbilRelaxant),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_relaxant.png");
 

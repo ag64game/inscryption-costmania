@@ -21,7 +21,7 @@ namespace StressCost.Sigils
         public override bool RespondsToSlotTargetedForAttack(CardSlot slot, PlayableCard attacker)
         {
             return slot.Equals(Card.Slot) && doDodge && 
-                (Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true).Card != null || Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false).Card != null);
+                (Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true).Card == null || Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false).Card == null);
         }
 
         public override IEnumerator OnUpkeep(bool playerUpkeep)
@@ -43,7 +43,7 @@ namespace StressCost.Sigils
 
             CardSlot right = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, false);
             CardSlot left = Singleton<BoardManager>.Instance.GetAdjacent(base.Card.Slot, true);
-            if (right.Card == null) yield return DoMovement(right, false); else if (left.Card == null) yield return DoMovement(left, true);
+            if (right != null && right.Card == null) yield return DoMovement(right, false); else if (left != null && left.Card == null) yield return DoMovement(left, true);
 
 
            yield return base.LearnAbility(0.1f);

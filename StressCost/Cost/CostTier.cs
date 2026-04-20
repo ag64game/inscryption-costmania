@@ -10,9 +10,9 @@ namespace StressCost.Cost
 {
     internal class CostTier
     {
-        public static int CostTierS(int amount) => Convert.ToInt32(Mathf.Floor(amount));
-        public static int CostTierV(int amount) => Convert.ToInt32(Mathf.Floor(amount));
-        public static int CostTierA(int amount) => Convert.ToInt32(Mathf.Floor(amount));
-        public static int CostTierF(int amount) => Convert.ToInt32(Mathf.Floor(amount));
+        public static int CostTierS(int amount) => Convert.ToInt32(Mathf.Floor(amount / 1.9f));
+        public static int CostTierV(int amount) => Convert.ToInt32(Mathf.Floor(amount / 1.8f));
+        public static int CostTierA(int amount) => Convert.ToInt32(Mathf.Floor(amount / 1.8f));
+        public static int CostTierF(int amount) => Convert.ToInt32(Mathf.Floor(amount / 1.65f));
     }
 }
