@@ -22,7 +22,7 @@ namespace StressCost.Cost
         public static bool CanBePlayed(int amount, CardInfo card, List<CardInfo> hand)
         {
             // Fair hand kicks in for cards whose Valor cost is 1 or less
-            return amount <= 1;
+            return hand.FindAll(card => card.ValorRank() >= amount).Count > 0;
         }
     }
 

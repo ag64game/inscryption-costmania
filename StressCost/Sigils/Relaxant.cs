@@ -24,19 +24,20 @@ namespace StressCost.Sigils
             ViewManager.Instance.SwitchToView(View.Default);
 
             Card.Anim.StrongNegationEffect();
-            if (Cost.StressCost.stressCounter > 0) Cost.StressCost.stressCounter -= 1;
+            if (Cost.StressCost.stressCounter > 0)
+            {
+                Cost.StressCost.stressCounter -= 1;
+                AudioController.Instance.PlaySound2D("plainBlip6", volume: 0.6f);
+            }
 
-            Console.WriteLine(Cost.StressCost.stressCounter);
             yield return LearnAbility(0.2f);
         }
 
         public static void AddRelaxant()
         {
-            const string rulebookDescription = "When [creature] is played, it provides an energy soul to its owner.";
-
             AbilityInfo info = AbilityManager.New("StressSigils",
                 "Relaxant",
-                "[creature] lowers the Stress Counter by 1 upon resolving on the board.",
+                "[creature] lowers the Stress Counter by 1 when placed.",
                 typeof(AbilRelaxant),
                 "StressCards/StressCost/StressCost/Resources/Sigils/3d_relaxant.png");
 

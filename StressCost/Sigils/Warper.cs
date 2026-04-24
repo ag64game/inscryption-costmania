@@ -18,7 +18,7 @@ namespace StressCost.Sigils
 
         private CardSlot selected;
 
-        public override bool RespondsToTurnEnd(bool playerTurnEnd) => playerTurnEnd;
+        public override bool RespondsToTurnEnd(bool playerTurnEnd) => playerTurnEnd == !Card.OpponentCard;
 
         public override IEnumerator OnTurnEnd(bool playerTurnEnd)
         {

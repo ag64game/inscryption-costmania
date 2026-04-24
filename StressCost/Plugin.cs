@@ -82,10 +82,12 @@ namespace StressCost
             harmony.PatchAll(typeof(Patches.PackPatches));
             harmony.PatchAll(typeof(Patches.DialoguePatches));
             harmony.PatchAll(typeof(Patches.SporePatches));
+            harmony.PatchAll(typeof(Patches.EncounterPatches));
 
             Patches.PackPatches.SetupStarterDecks();
             Patches.AbilityPatches.SetStackableAbilities();
             Patches.CollectionUIPatches.InitRareRecals();
+            Patches.DialoguePatches.GenerateRebechaRant();
 
 
             config3DAlchemy = base.Config.Bind<bool>("Alchemy in 3D", "Active", false, "Whether Alchemy dies should be rolled in the 3D acts, won't display them though");

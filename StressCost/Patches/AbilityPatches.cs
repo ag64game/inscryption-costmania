@@ -125,7 +125,7 @@ namespace StressCost.Patches
         [HarmonyPostfix]
         public static IEnumerator ThanatoKillCount(IEnumerator enumerator, PlayableCard __instance, bool wasSacrifice)
         {
-            if (__instance.OpponentCard) VariablestatDeathToll.killCount++;
+            if (__instance.OpponentCard) VariablestatDeathToll.killCount++; else VariablestatDeathToll.secondPlayer++;
 
             yield return enumerator;
         }
@@ -171,7 +171,7 @@ namespace StressCost.Patches
         public static IEnumerator BlackholeWhenMoving(IEnumerator enumerator, BoardManager __instance, PlayableCard card, CardSlot slot)
         {
             yield return enumerator;
-            yield return EndOfTunnelSuckOne(card, slot);
+            try { yield return EndOfTunnelSuckOne(card, slot); } finally { }
         }
 
         [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]

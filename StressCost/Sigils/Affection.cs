@@ -14,7 +14,7 @@ namespace StressCost.Sigils
         public static Ability ability;
         public override Ability Ability => ability;
 
-        public override bool RespondsToTurnEnd(bool playerTurnEnd) => playerTurnEnd;
+        public override bool RespondsToTurnEnd(bool playerTurnEnd) => playerTurnEnd == !Card.OpponentCard;
 
         public override IEnumerator OnTurnEnd(bool playerTurnEnd)
         {
@@ -22,9 +22,12 @@ namespace StressCost.Sigils
             yield return new WaitForSeconds(0.2f);
             yield return Singleton<TextBox>.Instance.ShowUntilInput($"{Card.Info.displayedName} preformed a seducive dance!", (GBC.TextBox.Style)Card.Info.temple);
 
-            if (Cost.StressCost.stressCounter > 0) Cost.StressCost.stressCounter -= 1;
-
-            Console.WriteLine(Cost.StressCost.stressCounter);
+            if (Cost.StressCost.stressCounter > 0)
+            {
+                Cost.StressCost.stressCounter -= 1;
+                AudioController.Instance.PlaySound2D("plainBlip6", volume: 0.6f);
+            }
+            
             yield return new WaitForSeconds(0.3f);
             yield return LearnAbility(0.2f);
         }

@@ -20,7 +20,8 @@ namespace StressCost.Sigils.VariableStats
 
         public override int[] GetStatValues()
         {
-            return new int[] { killCount, 0 };
+            if (!(base.Card as PlayableCard).OpponentCard) return new int[] { killCount, 0 };
+            else return new int[] { secondPlayer, 0 };
         }
 
         public static void SwitchPlayer()

@@ -106,15 +106,18 @@ namespace StressCost.Cost
 
         public static void AddValorRank(this PlayableCard card, int amount = 1)
         {
-            //If amount of positive: 1. If negative: -1
-            int incremental = amount / Math.Abs(amount);
-
-            for (int i = 0; i != amount; i += incremental)
+            if (amount != 0)
             {
-                var mod = new CardModificationInfo(0, 0);
-                mod.SetExtendedProperty("ValorRank", incremental);
+                //If amount of positive: 1. If negative: -1
+                int incremental = amount / Math.Abs(amount);
 
-                card.AddTemporaryMod(mod);
+                for (int i = 0; i != amount; i += incremental)
+                {
+                    var mod = new CardModificationInfo(0, 0);
+                    mod.SetExtendedProperty("ValorRank", incremental);
+
+                    card.AddTemporaryMod(mod);
+                }
             }
         }
 

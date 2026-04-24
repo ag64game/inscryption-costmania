@@ -120,6 +120,7 @@ namespace StressCost.Patches
         {
             public static IEnumerator Postfix(IEnumerator enumerator, TurnManager __instance, bool playerUpkeep)
             {
+                dontPay = false;
                 if (playerUpkeep && __instance.TurnNumber > 1 && (CostmaniaPlugin.config3DValor.Value || SaveManager.SaveFile.IsPart2)) yield return DoPromotionPhase();
                 yield return enumerator;
             }
@@ -208,7 +209,7 @@ namespace StressCost.Patches
         [HarmonyPrefix]
         public static void MakeAbilNotPay(AbilityBehaviour __instance)
         {
-            dontPay = true;
+            if (__instance is not Submerge) dontPay = true;
         }
 
         [HarmonyPatch(typeof(AbilityBehaviour), nameof(AbilityBehaviour.LearnAbility))]

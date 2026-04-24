@@ -19,7 +19,7 @@ namespace StressCost.Sigils
 
         public static bool dramaqueenTextPlayed = false;
 
-        public override bool RespondsToUpkeep(bool playerUpkeep) => playerUpkeep;
+        public override bool RespondsToUpkeep(bool playerUpkeep) => playerUpkeep == !Card.OpponentCard;
 
         public override IEnumerator OnUpkeep(bool playerUpkeep)
         {
@@ -27,16 +27,21 @@ namespace StressCost.Sigils
             base.Card.Anim.StrongNegationEffect();
             yield return new WaitForSeconds(0.2f);
             yield return Singleton<TextBox>.Instance.ShowUntilInput($"The merciless forces of gravity push further", (GBC.TextBox.Style)Card.Info.temple);
-            foreach (CardSlot target in Singleton<BoardManager>.Instance.allSlots.Where(slot => slot.Card != null && slot.Card.OpponentCard != Card.OpponentCard).OrderBy(slot => Math.Abs(slot.Index - Card.Slot.Index)))
+            try
             {
-                Console.WriteLine(target == null);
-                CardSlot destination;
+                foreach (CardSlot target in Singleton<BoardManager>.Instance.allSlots.Where(slot => slot.Card != null && slot.Card.OpponentCard != Card.OpponentCard).OrderBy(slot => Math.Abs(slot.Index - Card.Slot.Index)))
+                {
+                    Console.WriteLine(target == null);
+                    CardSlot destination;
 
-                if (target.Index > Card.Slot.Index) destination = Singleton<BoardManager>.Instance.GetAdjacent(target, true);
-                else destination = Singleton<BoardManager>.Instance.GetAdjacent(target, false);
+                    if (target.Index > Card.Slot.Index) destination = Singleton<BoardManager>.Instance.GetAdjacent(target, true);
+                    else destination = Singleton<BoardManager>.Instance.GetAdjacent(target, false);
 
-                yield return Singleton<BoardManager>.Instance.AssignCardToSlot(target.Card, destination, 0.1f, null, true);
+                    if (destination != null) yield return Singleton<BoardManager>.Instance.AssignCardToSlot(target.Card, destination, 0.1f, null, true);
+                    else yield return target.Card.Die(false, Card);
+                }
             }
+            finally { }
 
             yield return LearnAbility(0.2f);
         }

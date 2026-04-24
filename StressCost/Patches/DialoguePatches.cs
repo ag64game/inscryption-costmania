@@ -62,6 +62,7 @@ using System.Collections;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq;
 using System.Reflection;
@@ -74,6 +75,7 @@ using UnityEngine.Rendering;
 using UnityEngine.U2D;
 using UnityEngine.UI;
 using static InscryptionAPI.CardCosts.CardCostManager;
+using static InscryptionAPI.Slots.SlotModificationManager;
 using static System.Net.Mime.MediaTypeNames;
 using CustomLine = InscryptionAPI.Dialogue.CustomLine;
 using PoeFace = DiskCardGame.P03AnimationController.Face;
@@ -83,14 +85,18 @@ namespace StressCost.Patches
     internal class DialoguePatches
     {
         private static DialogueSpeaker curSpeaker = new DialogueSpeaker();
+
+        private static DialogueEvent eExplenation = null;
         private static bool tutorialPlaying = false;
         private static int tutorialState = 3;
+        private static bool playLeshyRant = false;
+        private static bool playP03Rant = false;
 
         [HarmonyPatch(typeof(DialogueHandler), nameof(DialogueHandler.PlayDialogueEvent))]
         [HarmonyPostfix]
         public static IEnumerator TutorialScene1(IEnumerator enumerator, DialogueHandler __instance, string eventId, TextBox.Style style, DialogueSpeaker speaker)
         {
-            Debug.Log(eventId);
+            UnityEngine.Debug.Log(eventId);
             if (eventId.Contains("ResourceTutorial"))
             {
                 
@@ -102,6 +108,30 @@ namespace StressCost.Patches
                     !DialogueEventsData.EventIsPlayed("ResourceTutorialGems1"))) tutorialState = 0;
                 }
             }
+
+            else if(eventId.Contains("LeshyGBCBossPhase1"))
+            {
+                curSpeaker = speaker;
+                if (DialogueEventsData.GetEventRepeatCount("LeshyGBCBossPhase1") < 2) playLeshyRant = true;
+            }
+
+            else if (eventId.Contains("P03BossBattleIntro"))
+            {
+                curSpeaker = speaker;
+                if (DialogueEventsData.GetEventRepeatCount("P03BossBattleIntro") < 2) playP03Rant = true;
+            }
+
+            else if(eventId == "MechanicDocks")
+            {
+                curSpeaker = speaker;
+
+                if (DialogueEventsData.GetEventRepeatCount("MechanicDocks") == 5 && DialogueEventsData.GetEventRepeatCount("MechanicDocksCostmania") < 4)
+                {
+                    yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(eExplenation.id, TextBox.Style.Neutral, curSpeaker);
+                    yield break;
+                }
+            }
+
             yield return enumerator;
         }
 
@@ -127,16 +157,50 @@ namespace StressCost.Patches
             }
         }
 
+        public static void GenerateRebechaRant()
+        {
+            var mainLineA = MechanicAlchemyLine();
+            var repeatLines = new List<List<CustomLine>>();
+            repeatLines.Add(MechanicStressLine());
+            repeatLines.Add(MechanicSpaceLine());
+            repeatLines.Add(MechanicValorLine());
+
+            eExplenation = DialogueManager.GenerateEvent(CostmaniaPlugin.GUID, "MechanicDocksCostmania",mainLineA, repeatLines);
+        }
+
         //In case you didn't immediately start with required cards in your hand
         [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.DoUpkeepPhase))]
         [HarmonyPostfix]
-        public static IEnumerator TutorialScene1Later(IEnumerator enumerator, TurnManager __instance, bool playerUpkeep)
+        public static IEnumerator OnUpkeepScenes(IEnumerator enumerator, TurnManager __instance, bool playerUpkeep)
         {
             yield return enumerator;
 
-            if (SaveManager.SaveFile.IsPart2 && tutorialState == 0 && __instance.TurnNumber > 1 && HasTempleInBattle())
+            if (SaveManager.SaveFile.IsPart2 && __instance.TurnNumber > 1)
             {
-                yield return PlayTutorialScene1();
+                if(tutorialState == 0 && HasTempleInBattle()) yield return PlayTutorialScene1();
+                if (playLeshyRant)
+                {
+                    DialogueEvent eLeshy = DialogueManager.GenerateEvent(CostmaniaPlugin.GUID, "LeshyRant", LeshyRantLines());
+                    yield return new WaitForSeconds(0.4f);
+                    yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(eLeshy.id, TextBox.Style.Nature, curSpeaker);
+                    yield return playLeshyRant = false;
+                }
+
+                if (playP03Rant && BoardManager.Instance != null && BoardManager.Instance.opponentSlots.Any(slot =>
+                {
+                    if (slot.Card != null)
+                    {
+                        var cond = BoardManager.Instance.GetCardQueuedForSlot(slot);
+                        return cond != null && cond.Info.GetModPrefix() != null && cond.Info.GetModPrefix().Contains("Space");
+                    }
+                    else return false;
+                }))
+                {
+                    DialogueEvent ePoe = DialogueManager.GenerateEvent(CostmaniaPlugin.GUID, "P03Rant", P03RantLines());
+                    yield return Singleton<DialogueHandler>.Instance.PlayDialogueEvent(ePoe.id, TextBox.Style.Tech, curSpeaker);
+                    yield return playP03Rant = false;
+                }
+
             }
         }
 
@@ -373,6 +437,105 @@ namespace StressCost.Patches
             ret.Add(GenFromString("Just like you did last turn.", emote: Emotion.Neutral));
             ret.Add(GenFromString("Prey tell you will take these warriors atop my tower where I lie in wait.", emote: Emotion.Neutral));
             ret.Add(GenFromString("Safe travels.", emote: Emotion.Neutral));
+
+            return ret;
+        }
+
+        private static List<CustomLine> LeshyRantLines()
+        {
+            List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("And in case you were asking...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Indeed my deck contains none of those putrid Alchemy cards.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("No chimeras of mana, no rancid mutations of flesh.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Only fangs.", emote: Emotion.Anger));
+            ret.Add(GenFromString("You degenerate modder.", emote: Emotion.Anger));
+
+            return ret;
+        }
+
+        private static List<CustomLine> P03RantLines()
+        {
+            List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("Listen...", emote: Emotion.Neutral));
+
+            if (DialogueManager.GetStyleFromAmbition() == TextBox.Style.Tech)
+                ret.Add(GenFromString("I know I said these cards are kinda trash...", emote: Emotion.Neutral));
+            else
+                ret.Add(GenFromString("Normally I'd say these cards are kinda trash...", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("But that's only because of Stardust", emote: Emotion.Anger));
+            ret.Add(GenFromString("And guess what...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I'm an NPC, dummy!", emote: Emotion.Laughter));
+            ret.Add(GenFromString("I don't need your stupid Stardust!", emote: Emotion.Laughter));
+            ret.Add(GenFromString("Good Luck!", emote: Emotion.Laughter));
+
+            return ret;
+        }
+
+        private static List<CustomLine> MechanicAlchemyLine()
+        {
+            List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("Woof.", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("You want to learn about the owners of those modded cards you love so much?", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Well they're not a known quantity I'll tell you that.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("But they seem as savage as the original Scrybes.", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("Take Niphox for example.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("The Scrybe of Alchemy.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Sick freak resides in a faraway island called the Misty Isles.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("All he does is run experiments to improve the results of his Stamping Machine.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Maybe Leshy is right not to trust those Alchemy cards.", emote: Emotion.Neutral));
+
+            return ret;
+        }
+
+        private static List<CustomLine> MechanicStressLine()
+        {
+            List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("Stress?", emote: Emotion.Neutral));
+            ret.Add(GenFromString("They belong to Phantomortis.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Or 'Morty'...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I guess the guy wants to come off all soft and cuddly.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("At least Grimora seems to take the bait pretty well.", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("But I've been around the block ever since you added him in...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I know how he makes those cards.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Everyone he operates on is on the verge of suicide afterwards.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("We all thank you for that.", emote: Emotion.Neutral));
+
+            return ret;
+        }
+
+        private static List<CustomLine> MechanicSpaceLine()
+        {
+            List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("And don't get me started on Constal.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("I honestly pity him.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("He was supposed to be the Scrybe of Technology before P03 showed up.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Then he got scrapped deep underwater.", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("Perhaps we could've had a shot at a leader who isn't a nutcase.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("But I'm sure being considered P03's inferior would likey let loose a bolt or two.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("At least he makes the most of it with those Space Cards.", emote: Emotion.Neutral));
+
+            return ret;
+        }
+
+        private static List<CustomLine> MechanicValorLine()
+        {
+            List<CustomLine> ret = new List<CustomLine>();
+            ret.Add(GenFromString("But I think the best one might be Herilind.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("Might as well be more of a witch than Grimora herself.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("She's completely obsessed with you humans from what I've gathered.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("And all she does is study them mad and record their fate.", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("There were actually rumors that Niphox allows her into his study.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("He uses her human anatomy to better his creations...", emote: Emotion.Neutral));
+            ret.Add(GenFromString("In turn allowing her access to more resources.", emote: Emotion.Neutral));
+            ret.Add(GenFromString("But maybe that hadn't been modded in yet.", emote: Emotion.Neutral));
+
+            ret.Add(GenFromString("Maybe wait for an update or something.", emote: Emotion.Neutral));
 
             return ret;
         }

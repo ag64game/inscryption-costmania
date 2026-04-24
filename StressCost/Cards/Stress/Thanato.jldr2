@@ -5,7 +5,7 @@
   "metaCategories": [ "GBCPlayable", "GBCPack", "Rare" ],
   "temple": "Undead",
   "baseAttack": 0,
-  "baseHealth": 2,
+  "baseHealth": 1,
   "specialStatIcon": "StressSigils.Death Toll",
   "specialAbilities": [ "StressSigils.Death Toll", "StressSigils.Death Toll"],
   "abilities": [ "StressSigils.First Strike" ],

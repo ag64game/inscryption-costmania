@@ -7,6 +7,6 @@
   "pixelTexture":"pixel_pylon.png",
   "traits":["Terrain"],
   "baseAttack": 0,
-  "baseHealth": 1,
+  "baseHealth": 2,
   "abilities": [ "StressSigils.Eldritch Power" ]
 }

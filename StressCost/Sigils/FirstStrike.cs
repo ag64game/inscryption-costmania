@@ -20,20 +20,23 @@ namespace StressCost.Sigils
         public override IEnumerator OnResolveOnBoard()
         {
             yield return PreSuccessfulTriggerSequence();
-            yield return Singleton<TextBox>.Instance.ShowUntilInput($"{Card.Info.displayedName} took a free shot!", (GBC.TextBox.Style)Card.Info.temple);
-
-            CardSlot opponent = base.Card.Slot.opposingSlot;
-
-            base.Card.Anim.PlayAttackAnimation(false, opponent);
-            yield return new WaitForSeconds(0.175f);
-
-            if (opponent.Card != null && !opponent.Card.FaceDown) yield return opponent.Card.TakeDamage(base.Card.Attack, base.Card);
-            else
+            if (!Card.Dead)
             {
+                yield return Singleton<TextBox>.Instance.ShowUntilInput($"{Card.Info.displayedName} took a free shot!", (GBC.TextBox.Style)Card.Info.temple);
+
+                CardSlot opponent = base.Card.Slot.opposingSlot;
+
+                base.Card.Anim.PlayAttackAnimation(false, opponent);
                 yield return new WaitForSeconds(0.175f);
-                yield return Singleton<LifeManager>.Instance.ShowDamageSequence(base.Card.Attack, base.Card.Attack, base.Card.OpponentCard, 0.3f, null, 0.15f, true);
+
+                if (opponent.Card != null && !opponent.Card.FaceDown) yield return opponent.Card.TakeDamage(base.Card.Attack, base.Card);
+                else
+                {
+                    yield return new WaitForSeconds(0.175f);
+                    yield return Singleton<LifeManager>.Instance.ShowDamageSequence(base.Card.Attack, base.Card.Attack, base.Card.OpponentCard, 0.3f, null, 0.15f, true);
+                }
+                yield return new WaitForSeconds(0.3f);
             }
-            yield return new WaitForSeconds(0.3f);
             yield return LearnAbility(0.2f);
         }
 
