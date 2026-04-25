@@ -143,11 +143,22 @@ namespace StressCost.Patches
                 turn.ForEach(data => Debug.Log($"{aga}: {data.name}"));
             });
         }
+        private static void PrintEncounter(EncounterBlueprintData enc)
+        {
+            int aga = 0;
+
+            enc.turns.ForEach(turn =>
+            {
+                aga++;
+                turn.ForEach(data => Debug.Log($"{aga}: {data.card.name}"));
+            });
+        }
 
         private static EncounterData ProspectorEncounterMod(EncounterData enc)
         {
             enc.opponentTurnPlan[0][0] = CardLoader.GetCardByName("Alchemy_Zeppeloid");
             enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Alchemy_Cyborg"));
+            enc.opponentTurnPlan[4].Add(CardLoader.GetCardByName("Alchemy_Zeppeloid"));
             enc.opponentTurnPlan[6].Add(CardLoader.GetCardByName("Alchemy_Biborg"));
 
             enc.opponentTurnPlan.Add(new List<CardInfo>());
@@ -160,21 +171,14 @@ namespace StressCost.Patches
             return enc;
         }
 
-        private static void PrintEncounter(EncounterBlueprintData enc)
-        {
-            int aga = 0;
-
-            enc.turns.ForEach(turn =>
-            {
-                aga++;
-                turn.ForEach(data => Debug.Log($"{aga}: {data.card.name}"));
-            });
-        }
-
         private static EncounterData AnglerEncounterMod(EncounterData enc)
         {
             enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Alchemy_Spite"));
             enc.opponentTurnPlan[0][0] = CardLoader.GetCardByName("Alchemy_DeepOne");
+
+            List<CardInfo> newTurn = new List<CardInfo>();
+            newTurn.Add(CardLoader.GetCardByName("Salmon"));
+            enc.opponentTurnPlan.Add(newTurn);
 
             return enc;
         }
@@ -191,9 +195,9 @@ namespace StressCost.Patches
         private static EncounterData LeshyEncounterMod(EncounterData enc)
         {
             enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Alpha"));
-            enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Otter"));
-            enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Otter"));
-            enc.opponentTurnPlan[4][0] = CardLoader.GetCardByName("Wolf");
+            enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Stoat"));
+            enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Stoat"));
+            enc.opponentTurnPlan[4][0] = CardLoader.GetCardByName("MantisGod");
             enc.opponentTurnPlan[5].Add(CardLoader.GetCardByName("WolfCub"));
 
             List<CardInfo> newTurn = new List<CardInfo>();
@@ -209,11 +213,17 @@ namespace StressCost.Patches
             enc.opponentTurnPlan[0][1] = CardLoader.GetCardByName("Stress_Aero");
             enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Stress_Myso"));
 
+            List<CardInfo> newTurn = new List<CardInfo>();
+            newTurn.Add(CardLoader.GetCardByName("Stress_Aero"));
+            newTurn.Add(CardLoader.GetCardByName("Banshee"));
+            enc.opponentTurnPlan.Add(newTurn);
+
             return enc;
         }
 
         private static EncounterData SawyerEncounterMod(EncounterData enc)
         {
+            enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Stress_Claustro"));
             enc.opponentTurnPlan[3][0] = CardLoader.GetCardByName("Stress_Myso");
 
             List<CardInfo> newTurn = new List<CardInfo>();
@@ -225,7 +235,10 @@ namespace StressCost.Patches
 
         private static EncounterData RoyalEncounterMod(EncounterData enc)
         {
-            enc.opponentTurnPlan[0].Add(CardLoader.GetCardByName("Stress_Claustro"));
+            enc.opponentTurnPlan[0].Add(CardLoader.GetCardByName("Stress_Nycto"));
+            enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Stress_Micro"));
+
+            enc.opponentTurnPlan[3].Add(CardLoader.GetCardByName("Stress_Micro"));
             enc.opponentTurnPlan[3][0] = CardLoader.GetCardByName("Stress_Arachno");
 
             List<CardInfo> newTurn = new List<CardInfo>();
@@ -250,11 +263,9 @@ namespace StressCost.Patches
             enc.Add(new List<CardInfo>());
 
             List<CardInfo> newTurn2 = new List<CardInfo>();
-            newTurn2.Add(CardLoader.GetCardByName("Stress_Trypano"));
+            newTurn2.Add(CardLoader.GetCardByName("Stress_Dystychi"));
             enc.Add(newTurn2);
 
-            enc.Add(new List<CardInfo>());
-            enc.Add(new List<CardInfo>());
             enc.Add(new List<CardInfo>());
             enc.Add(new List<CardInfo>());
             enc.Add(new List<CardInfo>());
@@ -272,6 +283,7 @@ namespace StressCost.Patches
             enc.opponentTurnPlan[1][0] = CardLoader.GetCardByName("Space_CookingQuarter");
 
             enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Space_ShootingStar"));
+            enc.opponentTurnPlan[2].Add(CardLoader.GetCardByName("Space_Alien"));
 
             List<CardInfo> newTurn = new List<CardInfo>();
             newTurn.Add(CardLoader.GetCardByName("Space_CookingQuarter"));
@@ -283,7 +295,8 @@ namespace StressCost.Patches
 
         private static EncounterData MelterEncounterMod(EncounterData enc)
         {
-            enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Space_KillerComet"));
+            enc.opponentTurnPlan[0].Add(CardLoader.GetCardByName("Space_KillerComet"));
+            enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Space_MutatedMeteorite"));
 
             List<CardInfo> newTurn = new List<CardInfo>();
             newTurn.Add(CardLoader.GetCardByName("Space_KillerComet"));
@@ -324,6 +337,7 @@ namespace StressCost.Patches
             enc.opponentTurnPlan[0][2] = CardLoader.GetCardByName("Valor_ReconScout");
 
             enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Valor_SentryScout"));
+            enc.opponentTurnPlan[1].Add(CardLoader.GetCardByName("Valor_ReconScout"));
 
             List<CardInfo> newTurn = new List<CardInfo>();
             newTurn.Add(CardLoader.GetCardByName("Valor_ReconScout"));

@@ -176,8 +176,10 @@ namespace StressCost.Patches
 
         [HarmonyPatch(typeof(TurnManager), nameof(TurnManager.CleanupPhase))]
         [HarmonyPrefix]
-        public static void ResetBlackholeText()
+        public static void ResetAbilityVars()
         {
+            AbilWatchman.spiedCountPlayer = 0;
+            AbilWatchman.spiedCountEnemy = 0;
             AbilEndOfTheTunnel.dramaqueenTextPlayed = false;
         }
 

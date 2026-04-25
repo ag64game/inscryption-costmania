@@ -5,7 +5,7 @@
   "metaCategories": [ "GBCPlayable", "GBCPack" ],
   "temple": "Nature",
   "baseAttack": 2,
-  "baseHealth": 3,
+  "baseHealth": 5,
   "pixelTexture":"pixel_mistwalker.png",
   "abilities": [ "Flying", "Reach" ],
   "extensionProperties": {
