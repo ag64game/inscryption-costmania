@@ -20,7 +20,7 @@ namespace StressCost.Sigils
                 "Driveby",
                 "[creature] deals 1 damage to the creature opposing it when moving.",
                 typeof(AbilDriveby),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_driveby.png");
+                "3d_driveby.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_driveby.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(1);

@@ -40,7 +40,7 @@ namespace StressCost.Sigils
                 "Blood Guzzler",
                 "When [creature] deals damage, it gains 1 Health for each damage dealt.",
                 typeof(AbilBloodGuzzler),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_bloodguzzler.png");
+                "3d_bloodguzzler.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_bloodguzzler.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(4);

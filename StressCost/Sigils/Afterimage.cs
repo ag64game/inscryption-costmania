@@ -66,7 +66,7 @@ namespace StressCost.Sigils
                 "Afterimage",
                 "Once per round, [creature] may dodge an incoming attack, dealing 1 damage to the attacker.",
                 typeof(AbilAfterimage),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_afterimage.png");
+                "3d_afterimage.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_afterimage.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(4);

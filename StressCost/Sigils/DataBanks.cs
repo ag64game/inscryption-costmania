@@ -20,7 +20,7 @@ namespace StressCost.Sigils
                 "Data Banks",
                 "While [creature] is on the board, it's owner loses 2 Stardust instead of all of them at the start of their turn.",
                 typeof(AbilDataBanks),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_databanks.png");
+                "3d_databanks.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_databanks.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(4);

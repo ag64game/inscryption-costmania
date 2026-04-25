@@ -43,7 +43,7 @@ namespace StressCost.Sigils
                 "Sigil Eater",
                 "When [creature] strikes an opposing creature and it perishes, replace all sigils except this one with those of the slain.",
                 typeof(AbilSigilEater),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_sigileater.png");
+                "3d_sigileater.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_sigileater.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);

@@ -39,7 +39,7 @@ namespace StressCost.Sigils
                 "Eldritch Power",
                 "At the beginning of each turn, [creature] provides it's owner with 1 Alchemy Die.",
                 typeof(AbilEldritchPower),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_eldritchpower.png");
+                "3d_eldritchpower.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_eldritchpower.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);

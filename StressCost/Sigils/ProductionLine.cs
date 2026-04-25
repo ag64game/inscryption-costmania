@@ -68,7 +68,7 @@ namespace StressCost.Sigils
                 "Production Line",
                 "At the end of the turn, [creature] will move in the direction inscrybed in the sigil, and will drop a Homonculus in it's place.",
                 typeof(AbilProductionLine),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_productionline.png");
+                "3d_productionline.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_productionline.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(5);

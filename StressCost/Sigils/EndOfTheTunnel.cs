@@ -52,7 +52,7 @@ namespace StressCost.Sigils
                 "End Of The Tunnel",
                 "After ringing the bell, all opposing creatures move one space towerds [creature], perishing should they be within their grasp.",
                 typeof(AbilEndOfTheTunnel),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_endoftheline.png");
+                "3d_endoftheline.png");
 
             info.SetPowerlevel(5);
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_endoftheline.png", typeof(CostmaniaPlugin).Assembly));

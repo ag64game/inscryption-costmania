@@ -58,7 +58,7 @@ namespace StressCost.Sigils
                 "Gestation Tank",
                 "When [creature] perishes, it's ever growing spawn is released in it's place.",
                 typeof(AbilGestationTank),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_gestationtank.png");
+                "3d_gestationtank.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_gestationtank.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(4);

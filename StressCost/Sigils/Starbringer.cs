@@ -29,7 +29,7 @@ namespace StressCost.Sigils
                 "Starbringer",
                 "While [creature] is on the board, it's owner starts every turn with an extra Stardust.",
                 typeof(AbilStarbringer),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_starbringer.png");
+                "3d_starbringer.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_starbringer.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);

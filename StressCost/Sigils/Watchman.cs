@@ -58,7 +58,7 @@ namespace StressCost.Sigils
                 "Watchman",
                 "While [creature] is on the board, it's owner draws a card every time an opponent enters play.",
                 typeof(AbilWatchman),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_watchman.png");
+                "3d_watchman.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_watchman.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(3);

@@ -58,7 +58,7 @@ namespace StressCost.Sigils
                 "Transmutation",
                 rulebookDescription,
                 typeof(AbilTransmutation),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_transmutation.png");
+                "3d_transmutation.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_transmutation.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);

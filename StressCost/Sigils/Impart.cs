@@ -40,7 +40,7 @@ namespace StressCost.Sigils
                 "Impart",
                 "When [creature] perishes, it adds it's Valor Rank to it's adjacent allies.",
                 typeof(AbilImpart),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_impart.png");
+                "3d_impart.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_impart.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(3);

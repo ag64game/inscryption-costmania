@@ -84,7 +84,7 @@ namespace StressCost.Sigils
                 "Pigify",
                 rulebookDescription,
                 typeof(AbilPigify),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_pigify.png");
+                "3d_pigify.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_pigify.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);

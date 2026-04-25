@@ -32,7 +32,7 @@ namespace StressCost.Sigils
                 "Shattering Stardust",
                 "The owner of [creature] loses 2 Stardust when playing it instead of gaining 1.",
                 typeof(AbilShatteringStardust),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_shatteringstardust.png");
+                "3d_shatteringstardust.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_shatteringstardust.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(-2);

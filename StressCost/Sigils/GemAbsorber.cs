@@ -67,7 +67,7 @@ namespace StressCost.Sigils
                 "Gem Absorber",
                 rulebookDescription,
                 typeof(AbilGemAbsorber),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_gemabsorber.png");
+                "3d_gemabsorber.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_gemabsorber.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);

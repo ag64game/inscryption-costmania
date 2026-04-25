@@ -37,7 +37,7 @@ namespace StressCost.Sigils
                 "Glory Kill",
                 "When [creature] strikes an opposing creature and it perishes, this card's Valor Rank goes up by 1.",
                 typeof(AbilGloryKill),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_glorykill.png");
+                "3d_glorykill.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_glorykill.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);

@@ -5,7 +5,7 @@
   "metaCategories": [ "GBCPlayable", "GBCPack" ],
   "temple": "Tech",
   "baseAttack": 3,
-  "baseHealth": 2,
+  "baseHealth": 1,
   "pixelTexture":"pixel_exomorph.png",
   "extensionProperties": {
   "StardustCost": "5"

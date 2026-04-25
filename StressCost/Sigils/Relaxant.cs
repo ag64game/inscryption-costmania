@@ -39,7 +39,7 @@ namespace StressCost.Sigils
                 "Relaxant",
                 "[creature] lowers the Stress Counter by 1 when placed.",
                 typeof(AbilRelaxant),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_relaxant.png");
+                "3d_relaxant.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_relaxant.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(1);

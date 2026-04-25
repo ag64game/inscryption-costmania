@@ -73,7 +73,7 @@ namespace StressCost.Sigils
                 "Rentrance",
                 rulebookDescription,
                 typeof(AbilRentrance),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_rentrance.png");
+                "3d_rentrance.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_rentrance.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);

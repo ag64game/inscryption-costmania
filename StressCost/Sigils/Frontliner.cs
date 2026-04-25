@@ -35,7 +35,7 @@ namespace StressCost.Sigils
                 "Frontliner",
                 "At the end of every turn, [creature]'s Valor Rank increases by 1.",
                 typeof(AbilFrontliner),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_frontliner.png");
+                "3d_frontliner.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_frontliner.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(4);

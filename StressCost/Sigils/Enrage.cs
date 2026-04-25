@@ -41,7 +41,7 @@ namespace StressCost.Sigils
                 "Enrage",
                 rulebookDescription,
                 typeof(AbilEnrage),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_enrage.png");
+                "3d_enrage.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_enrage.png", typeof(CostmaniaPlugin).Assembly));
             info.SetActivated(true);

@@ -46,7 +46,7 @@ namespace StressCost.Sigils
                 "Healing Aura",
                 rulebookDescription,
                 typeof(AbilHealingAura),
-                "StressCards/StressCost/StressCost/Resources/Sigils/3d_healingaura.png");
+                "3d_healingaura.png");
 
             info.SetPixelAbilityIcon(TextureHelper.GetImageAsTexture($"pixel_healingaura.png", typeof(CostmaniaPlugin).Assembly));
             info.SetPowerlevel(2);

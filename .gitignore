@@ -101,3 +101,6 @@ InitTestScene*.unity*
 #Aga's FUCK YOU dump
 StressCost/bin
 StressCost/obj
+
+icon.png
+manifest.json
