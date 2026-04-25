@@ -90,10 +90,10 @@ namespace StressCost
             Patches.DialoguePatches.GenerateRebechaRant();
 
 
-            config3DAlchemy = base.Config.Bind<bool>("Alchemy in 3D", "Active", false, "Whether Alchemy dies should be rolled in the 3D acts, won't display them though");
-            config3DStress = base.Config.Bind<bool>("Stress in 3D", "Active", false, "Whether the Stress Counter should be active in the 3D acts, won't display it though");
-            config3DStardust = base.Config.Bind<bool>("Stardust in 3D", "Active", false, "Whether the Stardust Counter should be active in the 3D acts, won't display it though");
-            config3DValor = base.Config.Bind<bool>("Valor in 3D", "Active", false, "Whether to do the Promotion Phase or not in the 3D acts, though it won't display the Max Valor Counter");
+            config3DAlchemy = base.Config.Bind<bool>("Alchemy in 3D", "Active", false, "Would allow Alchemy in 3D Acts, very buggy");
+            config3DStress = base.Config.Bind<bool>("Stress in 3D", "Active", false, "Would allow Stress in 3D Acts, very buggy");
+            config3DStardust = base.Config.Bind<bool>("Stardust in 3D", "Active", false, "Would allow Stardust in 3D Acts, very buggy");
+            config3DValor = base.Config.Bind<bool>("Valor in 3D", "Active", false, "Would allow Valor in 3D Acts, very buggy");
         }
 
         private void Update()
